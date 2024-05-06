@@ -23,7 +23,7 @@ export class AppComponent {
   metrics : any;
   dates: any;
   constructor(private service: LearningdashboardService) {}
-
+/*
   ngOnInit() {
     this.service.getHistoricalClosedTasksWithAE().subscribe((res) => {
       this.result = res;
@@ -37,7 +37,7 @@ export class AppComponent {
       let metricValues = [];
       this.result.forEach((item) => {
         metricValues.push(item.value) */
-
+  /*
       this.chart = new Chart('canvas', {
         type: 'line',
         data: {
@@ -55,6 +55,7 @@ export class AppComponent {
       });
 
     })
+*/
 
 /*
       var metricValues2 = Object.keys(res).map(function(entryIndex){
@@ -68,5 +69,5 @@ export class AppComponent {
     );
     */
 
-  }
+  //}
 }

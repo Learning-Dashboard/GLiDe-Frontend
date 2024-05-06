@@ -63,6 +63,7 @@ export class DashboardComponent {
       console.log(this.result);
       console.log(this.metrics);
       console.log(this.dates);
+
       /*
       let metricValues = [];
       this.result.forEach((item) => {

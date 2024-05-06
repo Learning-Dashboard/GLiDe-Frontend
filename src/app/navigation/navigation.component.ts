@@ -32,7 +32,7 @@ import {DashboardComponent} from "../dashboard/dashboard.component";
 })
 export class NavigationComponent {
   private breakpointObserver = inject(BreakpointObserver);
-  menuItems = ["dashboard","game"];
+  menuItems = ["dashboard","game", "profile"];
   public item1 = "dashboard";
 
   isHandset$: Observable<boolean> = this.breakpointObserver.observe(Breakpoints.Handset)
