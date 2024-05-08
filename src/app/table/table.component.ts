@@ -24,7 +24,7 @@ export class TableComponent implements AfterViewInit {
   example: TableItem[] = [];
   example2: TableItem[] = [];
   result: Object = [];
-  private position = 0;
+  public position = 0;
   public data2 : any = null;
 
 
@@ -34,20 +34,19 @@ export class TableComponent implements AfterViewInit {
   displayedColumns = ['position', 'name', 'points'];
 
   ngOnInit() {
-    this.service.getAchievements().subscribe((res) => {
+    this.service.getLeaderboard(1).subscribe((res) => {
       this.result = res;
       this.data = res;
       this.position = 0;
 
       for (let a in this.data) {
         this.position = this.position + 1;
-        this.example.push({name: this.data[a].name, points: 0, position: this.position});
+        this.example.push({name: this.data[a].name, points: this.data[a].points, position: this.position});
       }
-
       this.data = this.example;
 
       this.example.forEach((element: { name: any; }) => {
-        this.example2.push({name: element.name, points: 0, position: 0});
+        this.example2.push({name: element.name, points: 0, position: 1});
       });
 
       this.dataSource = new TableDataSource(this.data);

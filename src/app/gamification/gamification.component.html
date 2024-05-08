@@ -27,23 +27,76 @@
     }
   </mat-grid-list>
   <mat-grid-list cols="3" rowHeight="350px">
-      <mat-card class="dashboard-card">
-        <mat-card-header>
-          <mat-card-title>
-            {{name}}
-            <button mat-icon-button class="more-button" [matMenuTriggerFor]="menu" aria-label="Toggle menu">
-              <mat-icon>more_vert</mat-icon>
-            </button>
-            <mat-menu #menu="matMenu" xPosition="before">
-              <button mat-menu-item>Expand</button>
-              <button mat-menu-item>Remove</button>
-            </mat-menu>
-          </mat-card-title>
-        </mat-card-header>
-        <mat-card-content class="dashboard-card-content">
-          <div>Content: {{name}}</div>
-          <app-table></app-table>
-        </mat-card-content>
-      </mat-card>
+    <mat-card class="dashboard-card">
+      <mat-card-header>
+        <mat-card-title>
+          {{name}}
+          <button mat-icon-button class="more-button" [matMenuTriggerFor]="menu" aria-label="Toggle menu">
+            <mat-icon>more_vert</mat-icon>
+          </button>
+          <mat-menu #menu="matMenu" xPosition="before">
+            <button mat-menu-item>Expand</button>
+            <button mat-menu-item>Remove</button>
+          </mat-menu>
+        </mat-card-title>
+      </mat-card-header>
+      <mat-card-content class="dashboard-card-content">
+        <div>Content: {{name}}</div>
+        <ul>
+          @for (badge of badges; track badge) {
+            <li>
+              <div><img [src]="imagePath" alt="badge"></div>
+              <figcaption>{{badge.name}}</figcaption>
+              <div>{{badge.name}}</div>
+              <div>{{badge.date}}</div>
+            </li>
+          }
+        </ul>
+      </mat-card-content>
+    </mat-card>
+  </mat-grid-list>
+  <mat-grid-list cols="3" rowHeight="350px">
+    <mat-card class="dashboard-card">
+      <mat-card-header>
+        <mat-card-title>
+          Badges
+          <button mat-icon-button class="more-button" [matMenuTriggerFor]="menu" aria-label="Toggle menu">
+            <mat-icon>more_vert</mat-icon>
+          </button>
+          <mat-menu #menu="matMenu" xPosition="before">
+            <button mat-menu-item>Expand</button>
+            <button mat-menu-item>Remove</button>
+          </mat-menu>
+        </mat-card-title>
+      </mat-card-header>
+      <mat-card-content class="dashboard-card-content" [style.overflow]="'auto'" >
+        @for (badge of badges; track badge) {
+          <div class="image-wrapper">
+            <img [src]="imagePath" alt="badge">
+            <figcaption>{{badge.name}}</figcaption>
+            <figcaption>{{badge.date}}</figcaption>
+          </div>
+        }
+      </mat-card-content>
+    </mat-card>
+  </mat-grid-list>
+  <mat-grid-list cols="3" rowHeight="350px">
+    <mat-card class="dashboard-card-game">
+      <mat-card-header>
+        <mat-card-title>
+          {{title1}}
+          <button mat-icon-button class="more-button" [matMenuTriggerFor]="menu" aria-label="Toggle menu">
+            <mat-icon>more_vert</mat-icon>
+          </button>
+          <mat-menu #menu="matMenu" xPosition="before">
+            <button mat-menu-item>Expand</button>
+            <button mat-menu-item>Remove</button>
+          </mat-menu>
+        </mat-card-title>
+      </mat-card-header>
+      <mat-card-content class="dashboard-card-content">
+        <app-table></app-table>
+      </mat-card-content>
+    </mat-card>
   </mat-grid-list>
   </div>

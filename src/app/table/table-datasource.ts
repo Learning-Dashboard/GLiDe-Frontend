@@ -49,7 +49,7 @@ export class TableDataSource extends DataSource<TableItem> {
   paginator: MatPaginator | undefined;
   sort: MatSort | undefined;
   result: Object = [];
-  private position = 0;
+  public position2 = 0;
   public data2 : any = null;
 
   /*

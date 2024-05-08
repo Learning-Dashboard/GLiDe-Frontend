@@ -19,4 +19,8 @@ export class LearningdashboardService {
   getAchievements(){
     return this.http.get(this.backUrl + '/achievements');
   }
+
+  getLeaderboard(number: number){
+    return this.http.get(this.backUrl + '/leaderboards');
+  }
 }
