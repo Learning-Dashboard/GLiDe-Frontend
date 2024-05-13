@@ -10,9 +10,11 @@ export interface TableItem {
   position: number;
   name: string;
   points: number;
+  percent: number;
 }
 
 // TODO: replace this with real data from your application
+/*
 const EXAMPLE_DATA: TableItem[] = [
   {position: 1, name: 'Hydrogen', points: 20},
   {position: 2, name: 'Helium', points: 20},
@@ -35,6 +37,8 @@ const EXAMPLE_DATA: TableItem[] = [
   {position: 19, name: 'Potassium', points: 20},
   {position: 20, name: 'Calcium', points: 20},
 ];
+*/
+
 
 /**
  * Data source for the Table view. This class should

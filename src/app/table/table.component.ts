@@ -5,13 +5,14 @@ import { MatSortModule, MatSort } from '@angular/material/sort';
 import { TableDataSource, TableItem } from './table-datasource';
 import {LearningdashboardService} from "../services/learningdashboard.service";
 import {DomSanitizer} from "@angular/platform-browser";
+import {MatProgressBar} from "@angular/material/progress-bar";
 
 @Component({
   selector: 'app-table',
   templateUrl: './table.component.html',
   styleUrl: './table.component.css',
   standalone: true,
-  imports: [MatTableModule, MatPaginatorModule, MatSortModule]
+  imports: [MatTableModule, MatPaginatorModule, MatSortModule, MatProgressBar]
 })
 export class TableComponent implements AfterViewInit {
   @ViewChild(MatPaginator) paginator!: MatPaginator;
@@ -26,6 +27,8 @@ export class TableComponent implements AfterViewInit {
   result: Object = [];
   public position = 0;
   public data2 : any = null;
+  maxPoints: any;
+
 
 
   constructor(private service: LearningdashboardService) {  }
@@ -41,12 +44,14 @@ export class TableComponent implements AfterViewInit {
 
       for (let a in this.data) {
         this.position = this.position + 1;
-        this.example.push({name: this.data[a].name, points: this.data[a].points, position: this.position});
+        if (this.position == 1) this.maxPoints = this.data[a].points;
+        let percent = (this.data[a].points / this.maxPoints) * 100;
+        this.example.push({name: this.data[a].name, points: this.data[a].points, position: this.position, percent: percent});
       }
       this.data = this.example;
 
       this.example.forEach((element: { name: any; }) => {
-        this.example2.push({name: element.name, points: 0, position: 1});
+        this.example2.push({name: element.name, points: 0, position: 1, percent: 100});
       });
 
       this.dataSource = new TableDataSource(this.data);

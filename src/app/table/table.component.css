@@ -1,3 +1,13 @@
 .full-width-table {
   width: 100%;
 }
+
+.mat-column-position {
+  width: 10px;
+  text-align: center;
+  font-weight: bold;
+}
+
+.mat-column-name {
+  width: 150px;
+}

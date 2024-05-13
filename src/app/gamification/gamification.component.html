@@ -45,7 +45,7 @@
         <ul>
           @for (badge of badges; track badge) {
             <li>
-              <div><img [src]="imagePath" alt="badge"></div>
+              <div><img [src]="badge.icon" alt="badge"></div>
               <figcaption>{{badge.name}}</figcaption>
               <div>{{badge.name}}</div>
               <div>{{badge.date}}</div>
@@ -72,11 +72,30 @@
       <mat-card-content class="dashboard-card-content" [style.overflow]="'auto'" >
         @for (badge of badges; track badge) {
           <div class="image-wrapper">
-            <img [src]="imagePath" alt="badge">
+            <img [src]="badge.icon" alt="badge">
             <figcaption>{{badge.name}}</figcaption>
             <figcaption>{{badge.date}}</figcaption>
           </div>
         }
+      </mat-card-content>
+    </mat-card>
+  </mat-grid-list>
+  <mat-grid-list cols="3" rowHeight="650px">
+    <mat-card class="dashboard-card">
+      <mat-card-header>
+        <mat-card-title>
+          {{title1}}
+          <button mat-icon-button class="more-button" [matMenuTriggerFor]="menu" aria-label="Toggle menu">
+            <mat-icon>more_vert</mat-icon>
+          </button>
+          <mat-menu #menu="matMenu" xPosition="before">
+            <button mat-menu-item>Expand</button>
+            <button mat-menu-item>Remove</button>
+          </mat-menu>
+        </mat-card-title>
+      </mat-card-header>
+      <mat-card-content class="dashboard-card-content">
+        <div><canvas id="canvas" height="400">{{chart}}</canvas></div>
       </mat-card-content>
     </mat-card>
   </mat-grid-list>
