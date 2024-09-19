@@ -1,11 +1,11 @@
 import { waitForAsync, ComponentFixture, TestBed } from '@angular/core/testing';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 
-import { TableComponent } from './table.component';
+import { IndividualgamificationComponent } from './individualgamification.component';
 
-describe('TableComponent', () => {
-  let component: TableComponent;
-  let fixture: ComponentFixture<TableComponent>;
+describe('GamificationComponent', () => {
+  let component: IndividualgamificationComponent;
+  let fixture: ComponentFixture<IndividualgamificationComponent>;
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
@@ -14,7 +14,7 @@ describe('TableComponent', () => {
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(TableComponent);
+    fixture = TestBed.createComponent(IndividualgamificationComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

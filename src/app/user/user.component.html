@@ -1,0 +1,42 @@
+<form [formGroup]="addressForm" novalidate (ngSubmit)="onSubmit()">
+  <mat-card class="card">
+    <mat-card-header>
+      <mat-card-title>Select user</mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+      <!--
+      <div class="row">
+        <div class="col">
+          <mat-form-field class="full-width">
+            <mat-select placeholder="State" formControlName="state">
+              @for (state of states; track state) {
+                <mat-option [value]="state.abbreviation">{{ state.name }}</mat-option>
+              }
+            </mat-select>
+            @if (addressForm.controls['state'].hasError('required')) {
+              <mat-error>State is <strong>required</strong></mat-error>
+            }
+          </mat-form-field>
+        </div>
+      </div>
+      -->
+      <div class="row">
+        <div class="col">
+          <mat-form-field class="full-width">
+            <mat-select [(ngModel)]="selectedPlayer" placeholder="User" formControlName="user">
+              @for (res of result; track res) {
+                <mat-option [value]="res.playername">{{ res.playername }}</mat-option>
+              }
+            </mat-select>
+            @if (addressForm.controls['state'].hasError('required')) {
+              <mat-error>State is <strong>required</strong></mat-error>
+            }
+          </mat-form-field>
+        </div>
+      </div>
+    </mat-card-content>
+    <mat-card-actions>
+      <button mat-raised-button color="primary" type="submit">Submit</button>
+    </mat-card-actions>
+  </mat-card>
+</form>

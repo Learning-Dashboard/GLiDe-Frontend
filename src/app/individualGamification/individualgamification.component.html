@@ -1,0 +1,88 @@
+<div class="grid-container">
+  <div style="display: flex;">
+    <mat-card class="player-card" style="flex: 1 1 auto">
+      <mat-card-header>
+        <img mat-card-avatar class="header-image" [src]="individualPlayer.avatar" alt="avatar">
+        <mat-card-title>Individual: <strong>{{individualPlayer.playername}}</strong></mat-card-title>
+        <mat-card-subtitle>Role: {{individualPlayer.role}}</mat-card-subtitle>
+        <mat-card-subtitle>LEVEL {{individualPlayer.level}}</mat-card-subtitle>
+      </mat-card-header>
+      <mat-card-content>
+        <p style="margin-left: 75px; font-size: 18px; color: blue">
+          <strong>&starf; {{individualPlayer.points}}</strong> POINTS
+        </p>
+      </mat-card-content>
+    </mat-card>
+    <mat-card class="player-card" style="flex: 1 1 auto;">
+      <mat-card-header>
+        <img mat-card-avatar class="header-image" [src]="teamPlayer.logo" alt="logo">
+        <mat-card-title>Team: <strong>{{teamPlayer.playername}}</strong></mat-card-title>
+        <mat-card-subtitle>LEVEL {{teamPlayer.level}}</mat-card-subtitle>
+      </mat-card-header>
+      <mat-card-content>
+        <p style="margin-left: 75px; font-size: 18px; color: blue">
+          <strong>&starf; {{teamPlayer.points}}</strong> POINTS
+        </p>
+      </mat-card-content>
+    </mat-card>
+  </div>
+  <div style="display: flex;">
+    <mat-card class="player-card" style="flex: 1 1 auto;">
+      <mat-card-header>
+        <mat-card-title>
+          Achieved individual badges
+        </mat-card-title>
+      </mat-card-header>
+      <mat-card-content class="dashboard-card-content" [style.overflow]="'auto'" >
+        @for (badge of attainedBadges; track badge) {
+          <div class="image-wrapper">
+            <img [src]="badge.icon" alt="badge" matTooltip="{{badge.name}} - {{badge.date}}">
+            <div>{{badge.units}}</div>
+          </div>
+        }
+        <div>
+          <button mat-raised-button (click)="openDialogAchieved()">Show all achieved badges information</button>
+        </div>
+      </mat-card-content>
+    </mat-card>
+    <mat-card class="player-card" style="flex: 1 1 auto;">
+      <mat-card-header>
+        <mat-card-title>
+          Missing individual badges
+        </mat-card-title>
+      </mat-card-header>
+      <mat-card-content class="dashboard-card-content" [style.overflow]="'auto'" >
+        @for (badge of notAttainedBadges; track badge) {
+          <div class="image-wrapper">
+            <img [src]="badge.icon" alt="badge" style="opacity: 0.3" matTooltip="{{badge.name}}">
+            <div style="color:white">A</div>
+          </div>
+        }
+        <div>
+          <button mat-raised-button (click)="openDialogMissing()">Show all missing badges information</button>
+        </div>
+      </mat-card-content>
+    </mat-card>
+  </div>
+  <mat-card class="leaderboard-card">
+    <mat-card-header>
+      <mat-card-title>
+        {{leaderboard.name}}
+      </mat-card-title>
+    </mat-card-header>
+    <mat-card-content class="dashboard-card-content">
+      <div><app-leaderboard [item]="leaderboard"></app-leaderboard></div>
+      <div style="margin: 15px">
+      <mat-expansion-panel hideToggle>
+        <mat-expansion-panel-header>
+          <mat-panel-title style="text-align: center; justify-content: center; ">
+            Ranking
+          </mat-panel-title>
+        </mat-expansion-panel-header>
+        <p><app-ranking [item]="leaderboard"></app-ranking></p>
+      </mat-expansion-panel>
+      </div>
+    </mat-card-content>
+  </mat-card>
+</div>
+

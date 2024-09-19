@@ -1,0 +1,32 @@
+.grid-container {
+  margin: 20px;
+}
+
+.player-card {
+  margin: 15px;
+  display: inline-block;
+  width: 50%;
+}
+
+.header-image {
+  background-size: cover;
+  width: 60px;
+  height: 60px
+}
+
+.dashboard-card-content {
+  text-align: center;
+}
+
+.image-wrapper{
+  display: inline-block;
+  text-align: center;
+  margin-right: 20px;
+  max-width: 100px;
+  height: auto;
+  word-wrap: break-word;
+}
+
+.leaderboard-card {
+  margin: 15px;
+}

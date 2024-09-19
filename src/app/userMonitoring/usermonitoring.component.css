@@ -1,0 +1,46 @@
+.grid-container {
+  margin: 10px;
+}
+
+.configuration {
+  text-align: right;
+}
+
+.list {
+  max-width: 100%;
+  min-height: 60px;
+  display: block;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.expansion {
+  box-shadow: 0px 0px 0px 0px rgba(0, 0, 0, 0.2), 0px 0px 0px 0px rgba(0, 0, 0, 0.14), 0px 0px 0px 0px rgba(0, 0, 0, 0.12);
+  margin: 10px;
+}
+
+.small-card {
+  margin: 0px;
+  background: white;
+  display: inline-block;
+  width: 25%;
+  height: 200px;
+  box-shadow: 0px 0px 0px 0px rgba(0, 0, 0, 0.2), 0px 0px 0px 0px rgba(0, 0, 0, 0.14), 0px 0px 0px 0px rgba(0, 0, 0, 0.12);
+  flex: 1 1 auto;
+  text-align: center;
+}
+
+.big-card {
+  margin: 0px;
+  display: inline-block;
+  background: white;
+  width: 50%;
+  height: 200px;
+  box-shadow: 0px 0px 0px 0px rgba(0, 0, 0, 0.2), 0px 0px 0px 0px rgba(0, 0, 0, 0.14), 0px 0px 0px 0px rgba(0, 0, 0, 0.12);
+  flex: 1 1 auto;
+  text-align: center;
+}
+
+.dashboard-card-content {
+  text-align: center;
+}

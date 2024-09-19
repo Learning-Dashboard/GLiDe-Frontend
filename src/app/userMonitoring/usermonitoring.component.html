@@ -1,0 +1,45 @@
+<div class="grid-container">
+  <div class="configuration">
+    <mat-form-field>
+      <mat-label>Enter a date range</mat-label>
+      <mat-date-range-input [formGroup]="range" [rangePicker]="picker">
+        <input matStartDate formControlName="start" placeholder="Start date" (dateInput)="addEvent('input', $event)" (dateChange)="filterDates()">
+        <input matEndDate formControlName="end" placeholder="End date" (dateInput)="addEvent('input', $event)" (dateChange)="filterDates()">
+      </mat-date-range-input>
+      <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+      <mat-date-range-picker #picker></mat-date-range-picker>
+      @if (range.controls.start.hasError('matStartDateInvalid')) {
+        <mat-error>Invalid start date</mat-error>
+      }
+      @if (range.controls.end.hasError('matEndDateInvalid')) {
+        <mat-error>Invalid end date</mat-error>
+      }
+    </mat-form-field>
+  </div>
+  <div class="list" cdkDropList (cdkDropListDropped)="dropped($event)">
+    <mat-expansion-panel class="expansion" hideToggle *ngFor="let item of items" cdkDrag [expanded]="true">
+      <mat-expansion-panel-header [expandedHeight]="'30px'">
+        <mat-panel-title style="text-align: center; justify-content: center; ">
+          {{item}} - {{map_current_metrics.get(item)}} %
+        </mat-panel-title>
+      </mat-expansion-panel-header>
+      <div style="display: flex;">
+        <mat-card class="small-card">
+          <mat-card-content class="dashboard-card-content" [style.overflow]="'auto'" >
+            <div id="gaugeChart_{{item}}" style="height: 280px; margin-top: -60px"></div>
+          </mat-card-content>
+        </mat-card>
+        <mat-card class="small-card">
+          <mat-card-content class="dashboard-card-content" [style.overflow]="'auto'" >
+            <div style="height: 190px; margin-top: -10px" ><canvas id="pieChart_{{item}}"></canvas></div>
+          </mat-card-content>
+        </mat-card>
+        <mat-card class="big-card">
+          <mat-card-content class="dashboard-card-content" [style.overflow]="'auto'" >
+            <div style="height: 200px" ><canvas id="lineChart_{{item}}"></canvas></div>
+          </mat-card-content>
+        </mat-card>
+      </div>
+    </mat-expansion-panel>
+  </div>
+</div>

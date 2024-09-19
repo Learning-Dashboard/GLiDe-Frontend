@@ -3,9 +3,7 @@ import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { map } from 'rxjs/operators';
 import { Observable, of as observableOf, merge } from 'rxjs';
-import {LearningdashboardService} from "../services/learningdashboard.service";
 
-// TODO: Replace this with your own data model type
 export interface TableItem {
   position: number;
   name: string;
@@ -13,77 +11,19 @@ export interface TableItem {
   percent: number;
 }
 
-// TODO: replace this with real data from your application
-/*
-const EXAMPLE_DATA: TableItem[] = [
-  {position: 1, name: 'Hydrogen', points: 20},
-  {position: 2, name: 'Helium', points: 20},
-  {position: 3, name: 'Lithium', points: 20},
-  {position: 4, name: 'Beryllium', points: 20},
-  {position: 5, name: 'Boron', points: 20},
-  {position: 6, name: 'Carbon', points: 20},
-  {position: 7, name: 'Nitrogen', points: 20},
-  {position: 8, name: 'Oxygen', points: 20},
-  {position: 9, name: 'Fluorine', points: 20},
-  {position: 10, name: 'Neon', points: 20},
-  {position: 11, name: 'Sodium', points: 20},
-  {position: 12, name: 'Magnesium', points: 20},
-  {position: 13, name: 'Aluminum', points: 20},
-  {position: 14, name: 'Silicon', points: 20},
-  {position: 15, name: 'Phosphorus', points: 20},
-  {position: 16, name: 'Sulfur', points: 20},
-  {position: 17, name: 'Chlorine', points: 20},
-  {position: 18, name: 'Argon', points: 20},
-  {position: 19, name: 'Potassium', points: 20},
-  {position: 20, name: 'Calcium', points: 20},
-];
-*/
-
-
 /**
  * Data source for the Table view. This class should
  * encapsulate all logic for fetching and manipulating the displayed data
  * (including sorting, pagination, and filtering).
  */
-export class TableDataSource extends DataSource<TableItem> {
-  //data: TableItem[] = EXAMPLE_DATA;
+export class RankingDatasource extends DataSource<TableItem> {
   data: any = [];
-  example: TableItem[] = [];
-  example2: TableItem[] = [];
   paginator: MatPaginator | undefined;
   sort: MatSort | undefined;
-  result: Object = [];
-  public position2 = 0;
-  public data2 : any = null;
 
-  /*
-  constructor(private service: LearningdashboardService) {
+  constructor(data: any) {
     super();
-
-    this.service.getAchievements().subscribe((res) => {
-      this.result = res;
-      this.data = res;
-      this.position = 0;
-
-      for (let a in this.data) {
-        this.position = this.position + 1;
-        this.example.push({name: this.data[a].name, points: 0, position: this.position});
-      }
-
-      this.data = this.example;
-
-      this.example.forEach((element: { name: any; }) => {
-        this.example2.push({name: element.name, points: 0, position: 0});
-      });
-
-    })
-
-   */
-
-  constructor(data3: any) {
-    super();
-    console.log(data3);
-    this.data = data3;
+    this.data = data;
   }
 
   /**

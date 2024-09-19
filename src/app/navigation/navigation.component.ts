@@ -9,7 +9,6 @@ import { MatIconModule } from '@angular/material/icon';
 import { Observable } from 'rxjs';
 import { map, shareReplay } from 'rxjs/operators';
 import {RouterLink, RouterOutlet} from "@angular/router";
-import {DashboardComponent} from "../dashboard/dashboard.component";
 
 @Component({
   selector: 'app-navigation',
@@ -24,7 +23,6 @@ import {DashboardComponent} from "../dashboard/dashboard.component";
     MatIconModule,
     AsyncPipe,
     RouterOutlet,
-    DashboardComponent,
     RouterLink,
     TitleCasePipe,
     NgForOf
@@ -32,8 +30,8 @@ import {DashboardComponent} from "../dashboard/dashboard.component";
 })
 export class NavigationComponent {
   private breakpointObserver = inject(BreakpointObserver);
-  menuItems = ["dashboard","game", "profile"];
-  public item1 = "dashboard";
+
+  menuItems = ["monitoring", "gamification", "profile"];
 
   isHandset$: Observable<boolean> = this.breakpointObserver.observe(Breakpoints.Handset)
     .pipe(

@@ -1,0 +1,20 @@
+<mat-tab-group style="height: 90%;">
+  <mat-tab>
+    <ng-template mat-tab-label>
+      <mat-icon class="tab-icon">person</mat-icon>
+      User metrics
+    </ng-template>
+    <ng-template matTabContent>
+      <app-usermonitoring></app-usermonitoring>
+    </ng-template>
+  </mat-tab>
+  <mat-tab>
+    <ng-template mat-tab-label>
+      <mat-icon class="tab-icon">groups</mat-icon>
+      Project metrics
+    </ng-template>
+    <ng-template matTabContent>
+      <app-projectmonitoring></app-projectmonitoring>
+    </ng-template>
+  </mat-tab>
+</mat-tab-group>

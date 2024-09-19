@@ -1,0 +1,81 @@
+<div class="grid-container">
+  <div class="configuration">
+    <button mat-raised-button (click)="openDialog()">Configuration</button>
+    <mat-form-field style="margin-left: 20px">
+      <mat-label>Enter a date range</mat-label>
+      <mat-date-range-input [formGroup]="range" [rangePicker]="picker">
+        <input matStartDate formControlName="start" placeholder="Start date" (dateInput)="addEvent('input', $event)" (dateChange)="filterDates()">
+        <input matEndDate formControlName="end" placeholder="End date" (dateInput)="addEvent('input', $event)" (dateChange)="filterDates()">
+      </mat-date-range-input>
+      <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+      <mat-date-range-picker #picker></mat-date-range-picker>
+      @if (range.controls.start.hasError('matStartDateInvalid')) {
+        <mat-error>Invalid start date</mat-error>
+      }
+      @if (range.controls.end.hasError('matEndDateInvalid')) {
+        <mat-error>Invalid end date</mat-error>
+      }
+    </mat-form-field>
+  </div>
+  <mat-grid-list cols='{{selectedMetrics.length}}' rowHeight="210px">
+    @for (row of selectedMetrics; track row) {
+      <mat-grid-tile>
+        <mat-card class="card">
+          <mat-card-header style="justify-content: center">
+            <mat-card-title style="font-size: 15px;">
+              {{row}}
+            </mat-card-title>
+          </mat-card-header>
+          <mat-card-content class="dashboard-card-content" [style.overflow]="'auto'" >
+            <div id="gaugeChart_{{row}}" style="height: 250px; margin-top: -60px;"></div>
+          </mat-card-content>
+        </mat-card>
+      </mat-grid-tile>
+    }
+  </mat-grid-list>
+  <div></div>
+  <mat-grid-list cols='2' rowHeight="750px">
+    <mat-grid-tile>
+      <mat-card class="history-progress-card">
+        <mat-card-header style="justify-content: center">
+          <mat-card-title>
+            History
+          </mat-card-title>
+        </mat-card-header>
+        <mat-card-content class="dashboard-card-content" [style.overflow]="'auto'" >
+          @for (row of selectedHistoryMetrics; track row) {
+            {{row}}
+            <div style="height: 180px; margin-bottom: 20px" ><canvas id="historyChart_{{row}}"></canvas></div>
+          }
+        </mat-card-content>
+      </mat-card>
+    </mat-grid-tile>
+    <mat-grid-tile>
+      <mat-card class="history-progress-card">
+        <mat-card-header style="justify-content: center">
+          <mat-card-title>
+            Progress Bar
+          </mat-card-title>
+        </mat-card-header>
+        <mat-card-content class="progressbar-card-content" >
+          @for (row of progressBarInformation; track row) {
+            {{row[0]}}
+            <div class="progress-bar">
+              @for (category of row[1]; track category; let idx = $index) {
+                @if (idx==0) {
+                  <div class='progress-one' id="progress_{{row[0]}}_{{idx}}" [style.background-color]="category[1]" [style.height.px]=10 [style.width.%]=(row[1][idx][0])*100></div>
+                } @else {
+                  <div class='progress-one' id="progress_{{row[0]}}_{{idx}}" [style.background-color]="category[1]" [style.height.px]=10 [style.width.%]=(row[1][idx][0]-row[1][idx-1][0])*100></div>
+                }
+              }
+            </div>
+            <div style="margin-right: 7%; margin-left: 3%; margin-bottom: 30px">
+              <div class="progress-label" [style.text-indent.%]=row[2]><p style="font-size: 30px">&#9650;</p></div>
+              <div class="progress-label" [style.text-indent.%]=row[2]><p style="font-size: 20px">{{row[2]}}%</p></div>
+            </div>
+          }
+        </mat-card-content>
+      </mat-card>
+    </mat-grid-tile>
+  </mat-grid-list>
+</div>

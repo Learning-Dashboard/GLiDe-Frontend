@@ -1,0 +1,32 @@
+<h2 mat-dialog-title>Configure layout</h2>
+<div class="configuration">
+  <mat-form-field style="margin-right: 20px">
+    <mat-label>Gauge</mat-label>
+    <mat-select [(ngModel)]="data.metrics" multiple>
+      <mat-option *ngFor="let row of metrics" [value]="row">
+        {{row}}
+      </mat-option>
+    </mat-select>
+  </mat-form-field>
+  <mat-form-field style="margin-right: 20px">
+    <mat-label>History</mat-label>
+    <mat-select [(ngModel)]="data.historyMetrics" multiple>
+      <mat-option *ngFor="let row of metrics" [value]="row">
+        {{row}}
+      </mat-option>
+    </mat-select>
+  </mat-form-field>
+  <mat-form-field style="margin-right: 20px">
+    <mat-label>Bar</mat-label>
+    <mat-select [(ngModel)]="data.barMetrics" multiple>
+      <mat-option *ngFor="let row of metrics" [value]="row">
+        {{row}}
+      </mat-option>
+    </mat-select>
+  </mat-form-field>
+</div>
+<mat-dialog-actions>
+  <button mat-button (click)="onNoClick()">No Thanks</button>
+  <button mat-button [mat-dialog-close]="data" cdkFocusInitial>Ok</button>
+</mat-dialog-actions>
+
