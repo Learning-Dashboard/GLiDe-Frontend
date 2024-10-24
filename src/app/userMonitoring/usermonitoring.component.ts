@@ -22,6 +22,7 @@ import {MatDatepickerInputEvent, MatDatepickerModule} from '@angular/material/da
 import {MAT_DATE_LOCALE, provideNativeDateAdapter} from '@angular/material/core';
 import {MatExpansionPanel, MatExpansionPanelHeader, MatExpansionPanelTitle} from "@angular/material/expansion";
 import {CdkDrag, CdkDragDrop, CdkDropList, moveItemInArray} from "@angular/cdk/drag-drop";
+import {switchMap} from "rxjs";
 
 @Component({
   selector: 'app-usermonitoring',
@@ -105,11 +106,10 @@ export class UsermonitoringComponent {
     this.notInitial = true;
     this.filterDates();
 
-    this.service.getAllCategories().subscribe((result) => {
+    this.service.getAllCategories().pipe(switchMap(result => {
       this.allCategories = result;
-    });
-
-    this.service.getProjectCategories(this.project_name).subscribe((result) => {
+      return this.service.getProjectCategories(this.project_name);
+    })).subscribe(result => {
       this.result_categories = result;
       let metricsWithCategories = this.result_categories?.map((item: any) => ({externalId: item.externalId, categoryName: item.categoryName}));
       let categoryName : any;
