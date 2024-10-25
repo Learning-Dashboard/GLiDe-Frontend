@@ -108,20 +108,19 @@ export class UsermonitoringComponent {
 
     this.service.getAllCategories().pipe(switchMap(result => {
       this.allCategories = result;
-      return this.service.getProjectCategories(this.project_name);
-    })).subscribe(result => {
-      this.result_categories = result;
-      let metricsWithCategories = this.result_categories?.map((item: any) => ({externalId: item.externalId, categoryName: item.categoryName}));
-      let categoryName : any;
-      for (let metric in this.metricsId) {
-        if (this.metricsId[metric] == "assignedtasks" || this.metricsId[metric] == "closedtasks") categoryName = metricsWithCategories.find((x: { externalId: string}) => x.externalId === this.metricsId[metric] + '_' + this.user_name_Taiga).categoryName;
-        if (this.metricsId[metric] == "modifiedlines" || this.metricsId[metric] == "commits") categoryName = metricsWithCategories.find((x: { externalId: string}) => x.externalId === this.metricsId[metric] + '_' + this.user_name_GitHub).categoryName;
-        let categoryInformation = this.categoryInformation(categoryName);
-        this.current_categories.push(categoryInformation);
-      }
-    });
-
-    this.service.getMetrics(this.project_name).subscribe((res) => {
+      return this.service.getProjectCategories(this.project_name).pipe(switchMap(result => {
+        this.result_categories = result;
+        let metricsWithCategories = this.result_categories?.map((item: any) => ({externalId: item.externalId, categoryName: item.categoryName}));
+        let categoryName : any;
+        for (let metric in this.metricsId) {
+          if (this.metricsId[metric] == "assignedtasks" || this.metricsId[metric] == "closedtasks") categoryName = metricsWithCategories.find((x: { externalId: string}) => x.externalId === this.metricsId[metric] + '_' + this.user_name_Taiga).categoryName;
+          if (this.metricsId[metric] == "modifiedlines" || this.metricsId[metric] == "commits") categoryName = metricsWithCategories.find((x: { externalId: string}) => x.externalId === this.metricsId[metric] + '_' + this.user_name_GitHub).categoryName;
+          let categoryInformation = this.categoryInformation(categoryName);
+          this.current_categories.push(categoryInformation);
+        }
+        return this.service.getMetrics(this.project_name);
+      }))
+    })).subscribe(res => {
       this.result_metrics = res;
       let metrics = [];
       let student_name: string;
