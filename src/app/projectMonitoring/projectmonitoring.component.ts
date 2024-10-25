@@ -20,6 +20,7 @@ import {MatExpansionPanel, MatExpansionPanelHeader, MatExpansionPanelTitle} from
 import {MAT_DIALOG_DATA, MatDialog, MatDialogActions, MatDialogClose, MatDialogContent, MatDialogModule, MatDialogRef, MatDialogTitle} from '@angular/material/dialog';
 import {MatInput, MatInputModule} from "@angular/material/input";
 import {MAT_DATE_LOCALE, provideNativeDateAdapter} from '@angular/material/core';
+import {forkJoin, switchMap} from "rxjs";
 
 export interface DialogData {
   metrics: string[];
@@ -124,26 +125,33 @@ export class ProjectmonitoringComponent {
 
     this.filterDates();
 
-    this.getSelectedMetrics();
-    this.getCategories();
-    this.historyProjectMetrics();
-
-
+    this.getSelectedMetrics().pipe(switchMap(result => {
+      this.getSelectedMetricsSubscriber(result);
+      return forkJoin({
+        result2: this.getCategories(),
+        result3: this.historyProjectMetrics()
+      });
+    })).subscribe(({ result2, result3 }) => {
+      this.getProjectCategoriesSubscriber(result2);
+      this.getProjectMetricsHistorySubscriber(result3);
+    });
   }
 
   private getSelectedMetrics() {
-    this.service.getSelectedMetrics(this.player_name).subscribe((result) => {
-      let result_categories: any = result;
-      let metrics = result_categories.selectedMetrics;
-      let historyMetrics = result_categories.selectedHistoryMetrics;
-      let barMetrics = result_categories.selectedBarMetrics;
-      let metricsArray = metrics.split(',');
-      let historyMetricsArray = historyMetrics.split(',');
-      let barMetricsArray = barMetrics.split(',');
-      this.selectedMetrics = metricsArray.sort();
-      this.selectedHistoryMetrics = historyMetricsArray.sort();
-      this.selectedBarMetrics = barMetricsArray.sort();
-    });
+    return this.service.getSelectedMetrics(this.player_name);
+  }
+
+  private getSelectedMetricsSubscriber(result:any){
+    let result_categories: any = result;
+    let metrics = result_categories.selectedMetrics;
+    let historyMetrics = result_categories.selectedHistoryMetrics;
+    let barMetrics = result_categories.selectedBarMetrics;
+    let metricsArray = metrics.split(',');
+    let historyMetricsArray = historyMetrics.split(',');
+    let barMetricsArray = barMetrics.split(',');
+    this.selectedMetrics = metricsArray.sort();
+    this.selectedHistoryMetrics = historyMetricsArray.sort();
+    this.selectedBarMetrics = barMetricsArray.sort();
   }
 
   private updateSelectedMetrics(selectedMetrics: string[], selectedHistoryMetrics: string[], selectedBarMetrics: string[]) {
@@ -154,35 +162,36 @@ export class ProjectmonitoringComponent {
   }
 
   private getCategories() {
-    this.service.getAllCategories().subscribe((result) => {
+    return this.service.getAllCategories().pipe(switchMap(result => {
       this.allCategories = result;
-    });
+      return this.service.getProjectCategories(this.project_name);
+    }));
+  }
 
-    this.service.getProjectCategories(this.project_name).subscribe((result) => {
-      let metricsWithCategories: any;
-      metricsWithCategories = result;
+  private getProjectCategoriesSubscriber(result: any){
+    let metricsWithCategories: any;
+    metricsWithCategories = result;
 
-      let categoryName : any;
-      let categoryInformation : any;
-      let current_categories : any= [];
-      let current_bar_categories : any= [];
+    let categoryName : any;
+    let categoryInformation : any;
+    let current_categories : any= [];
+    let current_bar_categories : any= [];
 
-      for (let metric in this.selectedMetrics) {
-        categoryName = metricsWithCategories.find((x: { externalId: string}) => x.externalId === this.selectedMetrics[metric]).categoryName;
-        categoryInformation = this.categoryInformation(categoryName);
-        current_categories.push(categoryInformation);
-      }
+    for (let metric in this.selectedMetrics) {
+      categoryName = metricsWithCategories.find((x: { externalId: string}) => x.externalId === this.selectedMetrics[metric]).categoryName;
+      categoryInformation = this.categoryInformation(categoryName);
+      current_categories.push(categoryInformation);
+    }
 
-      for (let metric in this.selectedBarMetrics) {
-        categoryName = metricsWithCategories.find((x: { externalId: string}) => x.externalId === this.selectedBarMetrics[metric]).categoryName;
-        categoryInformation = this.categoryInformation(categoryName);
-        current_bar_categories.push(categoryInformation);
-      }
+    for (let metric in this.selectedBarMetrics) {
+      categoryName = metricsWithCategories.find((x: { externalId: string}) => x.externalId === this.selectedBarMetrics[metric]).categoryName;
+      categoryInformation = this.categoryInformation(categoryName);
+      current_bar_categories.push(categoryInformation);
+    }
 
-      this.current_categories = current_categories;
-      this.current_bar_categories = current_bar_categories;
-      this.getMetrics();
-    });
+    this.current_categories = current_categories;
+    this.current_bar_categories = current_bar_categories;
+    this.getMetrics();
   }
 
   private categoryInformation(categoryName: string):(string | number)[][] {
@@ -317,27 +326,29 @@ export class ProjectmonitoringComponent {
   }
 
   private historyProjectMetrics(){
-    this.service.getProjectMetricsHistory(this.project_name, this.startDate, this.endDate).subscribe((res) => {
-      let result: any;
-      result = res;
-      this.dataHistory = [];
-      this.labelsHistory = [];
+    return this.service.getProjectMetricsHistory(this.project_name, this.startDate, this.endDate);
+  }
 
-      let metric_id : string;
-      for (let metric in this.selectedHistoryMetrics) {
-        metric_id = this.selectedHistoryMetrics[metric];
-        let metric_values = result.map((item: any) => ({id: item.id, name: item.name, value: item.value, date: item.date})).filter((item: any) => (metric_id === item.id));
-        let particularDataHistory: any = [];
-        let particularLabelsHistory: any = [];
-        for (let historyMetricValue in metric_values) {
-          particularDataHistory.push(metric_values[historyMetricValue].value * 100);
-          particularLabelsHistory.push(metric_values[historyMetricValue].date.split("-").reverse().join("-"));
-        }
-        this.dataHistory.push(particularDataHistory);
-        this.labelsHistory.push(particularLabelsHistory);
+  private getProjectMetricsHistorySubscriber(res: any){
+    let result: any;
+    result = res;
+    this.dataHistory = [];
+    this.labelsHistory = [];
+
+    let metric_id : string;
+    for (let metric in this.selectedHistoryMetrics) {
+      metric_id = this.selectedHistoryMetrics[metric];
+      let metric_values = result.map((item: any) => ({id: item.id, name: item.name, value: item.value, date: item.date})).filter((item: any) => (metric_id === item.id));
+      let particularDataHistory: any = [];
+      let particularLabelsHistory: any = [];
+      for (let historyMetricValue in metric_values) {
+        particularDataHistory.push(metric_values[historyMetricValue].value * 100);
+        particularLabelsHistory.push(metric_values[historyMetricValue].date.split("-").reverse().join("-"));
       }
-      this.createHistoryCharts();
-    })
+      this.dataHistory.push(particularDataHistory);
+      this.labelsHistory.push(particularLabelsHistory);
+    }
+    this.createHistoryCharts();
   }
 
   filterDates() {
@@ -348,7 +359,7 @@ export class ProjectmonitoringComponent {
       this.startDate = this.range.value.start;
       this.startDate.setMinutes(this.startDate.getMinutes() - this.startDate.getTimezoneOffset())
       this.startDate = this.startDate.toJSON().substring(0,10);
-      this.historyProjectMetrics();
+      this.historyProjectMetrics().subscribe((res) => this.getProjectMetricsHistorySubscriber(res));
     }
   }
 
@@ -402,7 +413,7 @@ export class ProjectmonitoringComponent {
         this.selectedHistoryMetrics = result.historyMetrics;
         this.selectedBarMetrics = result.barMetrics;
         this.updateSelectedMetrics(this.selectedMetrics, this.selectedHistoryMetrics, this.selectedBarMetrics);
-        this.getCategories();
+        this.getCategories().subscribe((result) => this.getProjectCategoriesSubscriber(result));
         for (let gauge in this.gaugeChartTasks) {
           this.gaugeChartTasks[gauge].resize();
         }
