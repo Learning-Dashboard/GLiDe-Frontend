@@ -177,16 +177,24 @@ export class ProjectmonitoringComponent {
     let current_categories : any= [];
     let current_bar_categories : any= [];
 
-    for (let metric in this.selectedMetrics) {
-      categoryName = metricsWithCategories.find((x: { externalId: string}) => x.externalId === this.selectedMetrics[metric]).categoryName;
-      categoryInformation = this.categoryInformation(categoryName);
-      current_categories.push(categoryInformation);
+    if(this.selectedMetrics[0] !== "") {
+      for (let metric in this.selectedMetrics) {
+        categoryName = metricsWithCategories.find((x: {
+          externalId: string
+        }) => x.externalId === this.selectedMetrics[metric]).categoryName;
+        categoryInformation = this.categoryInformation(categoryName);
+        current_categories.push(categoryInformation);
+      }
     }
 
-    for (let metric in this.selectedBarMetrics) {
-      categoryName = metricsWithCategories.find((x: { externalId: string}) => x.externalId === this.selectedBarMetrics[metric]).categoryName;
-      categoryInformation = this.categoryInformation(categoryName);
-      current_bar_categories.push(categoryInformation);
+    if(this.selectedBarMetrics[0] !== "") {
+      for (let metric in this.selectedBarMetrics) {
+        categoryName = metricsWithCategories.find((x: {
+          externalId: string
+        }) => x.externalId === this.selectedBarMetrics[metric]).categoryName;
+        categoryInformation = this.categoryInformation(categoryName);
+        current_bar_categories.push(categoryInformation);
+      }
     }
 
     this.current_categories = current_categories;
@@ -413,7 +421,6 @@ export class ProjectmonitoringComponent {
         this.selectedHistoryMetrics = result.historyMetrics;
         this.selectedBarMetrics = result.barMetrics;
         this.updateSelectedMetrics(this.selectedMetrics, this.selectedHistoryMetrics, this.selectedBarMetrics).pipe(switchMap(result => {
-          this.getSelectedMetricsSubscriber(result);
           return forkJoin({
             result2: this.getCategories(),
             result3: this.historyProjectMetrics()
