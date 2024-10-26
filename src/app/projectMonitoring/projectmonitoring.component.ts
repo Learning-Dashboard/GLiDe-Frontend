@@ -158,7 +158,7 @@ export class ProjectmonitoringComponent {
     let metricsString = selectedMetrics.toString();
     let metricsHistoryString = selectedHistoryMetrics.toString();
     let metricsBarString = selectedBarMetrics.toString();
-    this.service.updateSelectedMetrics(this.player_name, metricsString, metricsHistoryString, metricsBarString).subscribe((result) => {});
+    return this.service.updateSelectedMetrics(this.player_name, metricsString, metricsHistoryString, metricsBarString);
   }
 
   private getCategories() {
@@ -412,8 +412,16 @@ export class ProjectmonitoringComponent {
         this.selectedMetrics = result.metrics;
         this.selectedHistoryMetrics = result.historyMetrics;
         this.selectedBarMetrics = result.barMetrics;
-        this.updateSelectedMetrics(this.selectedMetrics, this.selectedHistoryMetrics, this.selectedBarMetrics);
-        this.getCategories().subscribe((result) => this.getProjectCategoriesSubscriber(result));
+        this.updateSelectedMetrics(this.selectedMetrics, this.selectedHistoryMetrics, this.selectedBarMetrics).pipe(switchMap(result => {
+          this.getSelectedMetricsSubscriber(result);
+          return forkJoin({
+            result2: this.getCategories(),
+            result3: this.historyProjectMetrics()
+          });
+        })).subscribe(({result2, result3}) => {
+          this.getProjectCategoriesSubscriber(result2);
+          this.getProjectMetricsHistorySubscriber(result3)
+        });
         for (let gauge in this.gaugeChartTasks) {
           this.gaugeChartTasks[gauge].resize();
         }
