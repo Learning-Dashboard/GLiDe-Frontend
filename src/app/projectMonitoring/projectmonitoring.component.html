@@ -57,7 +57,7 @@
             Progress Bar
           </mat-card-title>
         </mat-card-header>
-        <mat-card-content class="progressbar-card-content" >
+        <mat-card-content class="progressbar-card-content" [style.overflow]="'auto'">
           @for (row of progressBarInformation; track row) {
             {{row[0]}}
             <div class="progress-bar">
