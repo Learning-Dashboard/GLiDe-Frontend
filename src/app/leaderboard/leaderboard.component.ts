@@ -147,6 +147,7 @@ export class LeaderboardComponent {
         plugins: [bgImage],
         options: {
           maintainAspectRatio: false,
+          resizeDelay: 200,
           events: [],
           plugins: {
             legend: {
