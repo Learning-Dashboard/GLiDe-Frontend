@@ -395,6 +395,12 @@ export class ProjectmonitoringComponent {
         },
         options: {
           maintainAspectRatio: false,
+          scales: {
+            y: {
+              min: 0,
+              max: 100
+            }
+          },
           plugins: {
             legend: {
               display: false
