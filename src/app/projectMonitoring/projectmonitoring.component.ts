@@ -101,7 +101,7 @@ export class ProjectmonitoringComponent {
   private allCategories: any = [];
   protected progressBarInformation : any = [];
 
-  private metricNameDictionary: any = {
+  protected metricNameDictionary: any = {
     acceptance_criteria_check: "Acceptance Criteria Application",
     closed_tasks_with_AE: "Closed Tasks with Actual Effort Information",
     commits_anonymous: "'Anonymous' commits",
