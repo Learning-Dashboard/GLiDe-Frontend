@@ -101,6 +101,19 @@ export class ProjectmonitoringComponent {
   private allCategories: any = [];
   protected progressBarInformation : any = [];
 
+  private metricNameDictionary: any = {
+    acceptance_criteria_check: "Acceptance Criteria Application",
+    closed_tasks_with_AE: "Closed Tasks with Actual Effort Information",
+    commits_anonymous: "'Anonymous' commits",
+    commits_sd: "Commits Standard Deviaton",
+    commits_taskreference: "Commits Tasks Relation",
+    deviation_effort_estimation_simple: "Deviation in Estimation of Task Effort",
+    pattern_check: "Use of User Story Pattern",
+    tasks_sd: "Tasks Standard Deviation",
+    tasks_with_EE: "Tasks with Estimated Effort Information",
+    unassignedtasks: "Unassigned tasks"
+  };
+
   constructor(private service: LearningdashboardService) {}
 
   ngOnInit() {
@@ -135,6 +148,22 @@ export class ProjectmonitoringComponent {
       this.getProjectCategoriesSubscriber(result2);
       this.getProjectMetricsHistorySubscriber(result3);
     });
+  }
+
+  private convertMetricIdToName(metrics:string[]): string[]{
+    let metricNames = [];
+    for (let metric in metrics){
+      metricNames.push(this.metricNameDictionary[metrics[metric]]);
+    }
+    return metricNames;
+  }
+
+  private convertMetricNameToId(metrics:string[]): string[]{
+    let metricNames = [];
+    for (let metric in metrics){
+      metricNames.push(<string>Object.keys(this.metricNameDictionary).find(key => this.metricNameDictionary[key] === metrics[metric]));
+    }
+    return metricNames;
   }
 
   private getSelectedMetrics() {
@@ -418,14 +447,14 @@ export class ProjectmonitoringComponent {
 
   openDialog(): void {
     const dialogRef = this.dialog.open(DialogOverviewExampleDialog, {
-      data: {metrics: this.selectedMetrics, historyMetrics: this.selectedHistoryMetrics, barMetrics: this.selectedBarMetrics},
+      data: {metrics: this.convertMetricIdToName(this.selectedMetrics), historyMetrics: this.convertMetricIdToName(this.selectedHistoryMetrics), barMetrics: this.convertMetricIdToName(this.selectedBarMetrics)},
     });
 
     dialogRef.afterClosed().subscribe(result => {
       if (result !== undefined) {
-        this.selectedMetrics = result.metrics;
-        this.selectedHistoryMetrics = result.historyMetrics;
-        this.selectedBarMetrics = result.barMetrics;
+        this.selectedMetrics = this.convertMetricNameToId(result.metrics);
+        this.selectedHistoryMetrics = this.convertMetricNameToId(result.historyMetrics);
+        this.selectedBarMetrics = this.convertMetricNameToId(result.barMetrics);
         this.updateSelectedMetrics(this.selectedMetrics, this.selectedHistoryMetrics, this.selectedBarMetrics).pipe(switchMap(result => {
           return forkJoin({
             result2: this.getCategories(),
@@ -468,7 +497,7 @@ export class DialogOverviewExampleDialog {
   readonly dialogRef = inject(MatDialogRef<DialogOverviewExampleDialog>);
   readonly data = inject<DialogData>(MAT_DIALOG_DATA);
   readonly selectedMetrics = this.data.metrics;
-  readonly metrics: string[] = ["acceptance_criteria_check", "closed_tasks_with_AE", "commits_anonymous", "commits_sd", "commits_taskreference", "deviation_effort_estimation_simple", "pattern_check", "tasks_sd", "tasks_with_EE", "unassignedtasks"];
+  readonly metrics: string[] = ["Acceptance Criteria Application", "Closed Tasks with Actual Effort Information", "'Anonymous' commits", "Commits Standard Deviaton", "Commits Tasks Relation", "Deviation in Estimation of Task Effort", "Use of User Story Pattern", "Tasks Standard Deviation", "Tasks with Estimated Effort Information", "Unassigned tasks"];
 
   onNoClick(): void {
     this.dialogRef.close();
