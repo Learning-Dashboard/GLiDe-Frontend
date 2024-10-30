@@ -242,7 +242,7 @@ export class ProjectmonitoringComponent {
       let categories : any = this.current_bar_categories[current_category];
       let value_format = this.projectBarMetrics[current_category].value * 100;
       value_format = Math.round(value_format * 100) / 100;
-      progressBarInformation.push([this.projectBarMetrics[current_category].id, categories, value_format]);
+      progressBarInformation.push([this.projectBarMetrics[current_category].name, categories, value_format]);
     }
     this.progressBarInformation = progressBarInformation;
   }
