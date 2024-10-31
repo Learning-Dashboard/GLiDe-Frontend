@@ -1,5 +1,5 @@
 import {Component, inject} from '@angular/core';
-import {AsyncPipe, NgForOf, NgIf} from '@angular/common';
+import {AsyncPipe, NgForOf, NgIf, NgStyle} from '@angular/common';
 import { MatGridListModule } from '@angular/material/grid-list';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatIconModule } from '@angular/material/icon';
@@ -65,7 +65,8 @@ export interface DialogData {
     MatDialogModule,
     MatInput,
     MatDatepickerModule,
-    NgIf
+    NgIf,
+    NgStyle
   ]
 })
 export class ProjectmonitoringComponent {
@@ -285,7 +286,7 @@ export class ProjectmonitoringComponent {
           startAngle: 180,
           endAngle: 0,
           center: ['50%', '75%'],
-          radius: '100%',
+          radius: 100 - this.selectedMetrics.length + '%',
           min: 0,
           max: 1,
           splitNumber: 10,
@@ -298,24 +299,24 @@ export class ProjectmonitoringComponent {
           pointer: {
             icon: 'path://M12.8,0.7l12,40.1H0.7L12.8,0.7z',
             length: '12%',
-            width: 20,
+            width: 20 - this.selectedMetrics.length,
             offsetCenter: [0, '-60%'],
             itemStyle: {
               color: 'black'
             }
           },
           axisTick: {
-            length: 12,
+            length: 12 - 0.75*this.selectedMetrics.length,
             lineStyle: {
               color: 'auto',
-              width: 2
+              width: 2 - 0.1*this.selectedMetrics.length
             }
           },
           splitLine: {
-            length: 20,
+            length: 20 - this.selectedMetrics.length,
             lineStyle: {
               color: 'auto',
-              width: 5
+              width: 5 - 0.25*this.selectedMetrics.length
             }
           },
           axisLabel: {
@@ -341,8 +342,8 @@ export class ProjectmonitoringComponent {
             fontSize: 10
           },
           detail: {
-            fontSize: 35,
-            offsetCenter: [0, '-25%'],
+            fontSize: 35 - 2.55*this.selectedMetrics.length,
+            offsetCenter: [0, -25 + this.selectedMetrics.length + '%'],
             valueAnimation: true,
             formatter: function (value: number) {
               let value_format = value * 100;
