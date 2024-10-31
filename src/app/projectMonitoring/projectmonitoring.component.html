@@ -21,8 +21,8 @@
     @for (row of selectedMetrics; track row) {
       <mat-grid-tile>
         <mat-card class="card">
-          <mat-card-header style="justify-content: center">
-            <mat-card-title style="font-size: 15px;">
+          <mat-card-header style="justify-content: center; height: 40px;">
+            <mat-card-title [ngStyle]="{'font-size': (15 - 0.5*selectedMetrics.length) + 'px'}">
               {{metricNameDictionary[row]}}
             </mat-card-title>
           </mat-card-header>
