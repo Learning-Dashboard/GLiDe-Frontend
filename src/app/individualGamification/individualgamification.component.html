@@ -1,6 +1,6 @@
 <div class="grid-container">
   <div style="display: flex;">
-    <mat-card class="player-card" style="flex: 1 1 auto">
+    <mat-card *ngIf="individualPlayer" class="player-card" style="flex: 1 1 auto">
       <mat-card-header>
         <img mat-card-avatar class="header-image" [src]="individualPlayer.avatar" alt="avatar">
         <mat-card-title>Individual: <strong>{{individualPlayer.playername}}</strong></mat-card-title>
@@ -13,7 +13,7 @@
         </p>
       </mat-card-content>
     </mat-card>
-    <mat-card class="player-card" style="flex: 1 1 auto;">
+    <mat-card *ngIf="teamPlayer" class="player-card" style="flex: 1 1 auto;">
       <mat-card-header>
         <img mat-card-avatar class="header-image" [src]="teamPlayer.logo" alt="logo">
         <mat-card-title>Team: <strong>{{teamPlayer.playername}}</strong></mat-card-title>
@@ -64,7 +64,7 @@
       </mat-card-content>
     </mat-card>
   </div>
-  <mat-card class="leaderboard-card">
+  <mat-card *ngIf="leaderboard" class="leaderboard-card">
     <mat-card-header>
       <mat-card-title>
         {{leaderboard.name}}
