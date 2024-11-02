@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { AsyncPipe } from '@angular/common';
+import {AsyncPipe, NgIf} from '@angular/common';
 import { MatGridListModule } from '@angular/material/grid-list';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatIconModule } from '@angular/material/icon';
@@ -47,7 +47,8 @@ let globalNotAttainedBadges: Badge[] = [];
     MatDivider,
     MatTooltip,
     LeaderboardComponent,
-    RankingComponent
+    RankingComponent,
+    NgIf
   ]
 })
 
