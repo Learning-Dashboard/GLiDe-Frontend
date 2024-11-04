@@ -161,7 +161,7 @@ export class ProjectmonitoringComponent {
 
   private convertMetricNameToId(metrics:string[]): string[]{
     let metricNames = [];
-    for (let metric in metrics){
+    for (let metric in metrics) {
       metricNames.push(<string>Object.keys(this.metricNameDictionary).find(key => this.metricNameDictionary[key] === metrics[metric]));
     }
     return metricNames;
@@ -174,14 +174,23 @@ export class ProjectmonitoringComponent {
   private getSelectedMetricsSubscriber(result:any){
     let result_categories: any = result;
     let metrics = result_categories.selectedMetrics;
+    if (metrics === "") this.selectedMetrics = [];
+    else {
+      let metricsArray = metrics.split(',');
+      this.selectedMetrics = metricsArray.sort();
+    }
     let historyMetrics = result_categories.selectedHistoryMetrics;
+    if (historyMetrics === "") this.selectedHistoryMetrics = [];
+    else {
+      let historyMetricsArray = historyMetrics.split(',');
+      this.selectedHistoryMetrics = historyMetricsArray.sort();
+    }
     let barMetrics = result_categories.selectedBarMetrics;
-    let metricsArray = metrics.split(',');
-    let historyMetricsArray = historyMetrics.split(',');
-    let barMetricsArray = barMetrics.split(',');
-    this.selectedMetrics = metricsArray.sort();
-    this.selectedHistoryMetrics = historyMetricsArray.sort();
-    this.selectedBarMetrics = barMetricsArray.sort();
+    if (barMetrics === "") this.selectedBarMetrics = [];
+    else {
+      let barMetricsArray = barMetrics.split(',');
+      this.selectedBarMetrics = barMetricsArray.sort();
+    }
   }
 
   private updateSelectedMetrics(selectedMetrics: string[], selectedHistoryMetrics: string[], selectedBarMetrics: string[]) {
@@ -207,24 +216,20 @@ export class ProjectmonitoringComponent {
     let current_categories : any= [];
     let current_bar_categories : any= [];
 
-    if(this.selectedMetrics[0] !== "") {
-      for (let metric in this.selectedMetrics) {
-        categoryName = metricsWithCategories.find((x: {
-          externalId: string
-        }) => x.externalId === this.selectedMetrics[metric]).categoryName;
-        categoryInformation = this.categoryInformation(categoryName);
-        current_categories.push(categoryInformation);
-      }
+    for (let metric in this.selectedMetrics) {
+      categoryName = metricsWithCategories.find((x: {
+        externalId: string
+      }) => x.externalId === this.selectedMetrics[metric]).categoryName;
+      categoryInformation = this.categoryInformation(categoryName);
+      current_categories.push(categoryInformation);
     }
 
-    if(this.selectedBarMetrics[0] !== "") {
-      for (let metric in this.selectedBarMetrics) {
-        categoryName = metricsWithCategories.find((x: {
-          externalId: string
-        }) => x.externalId === this.selectedBarMetrics[metric]).categoryName;
-        categoryInformation = this.categoryInformation(categoryName);
-        current_bar_categories.push(categoryInformation);
-      }
+    for (let metric in this.selectedBarMetrics) {
+      categoryName = metricsWithCategories.find((x: {
+        externalId: string
+      }) => x.externalId === this.selectedBarMetrics[metric]).categoryName;
+      categoryInformation = this.categoryInformation(categoryName);
+      current_bar_categories.push(categoryInformation);
     }
 
     this.current_categories = current_categories;
