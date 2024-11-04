@@ -17,7 +17,7 @@
       }
     </mat-form-field>
   </div>
-  <mat-grid-list cols='{{selectedMetrics.length}}' rowHeight="210px">
+  <mat-grid-list *ngIf="selectedMetrics.length !== 0" cols='{{selectedMetrics.length}}' rowHeight="210px">
     @for (row of selectedMetrics; track row) {
       <mat-grid-tile>
         <mat-card class="card">
