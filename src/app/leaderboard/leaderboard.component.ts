@@ -1,11 +1,14 @@
 import {Component, Input} from '@angular/core';
 import Chart from "chart.js/auto";
 import {LearningdashboardService} from "../services/learningdashboard.service";
+import {NgIf} from "@angular/common";
 
 @Component({
   selector: 'app-leaderboard',
   standalone: true,
-  imports: [],
+  imports: [
+    NgIf
+  ],
   templateUrl: './leaderboard.component.html',
   styleUrl: './leaderboard.component.css'
 })
@@ -17,6 +20,7 @@ export class LeaderboardComponent {
 
   private leaderboardResultsData: any = [];
   private leaderboardResults: any = [];
+  protected validLeaderboard = false;
 
   constructor(private service: LearningdashboardService){}
 
@@ -32,30 +36,26 @@ export class LeaderboardComponent {
       let achievementUnit = ['-', '-', '-'];
       let avatar = ['-', '-', '-'];
 
-      const position1 = this.leaderboardResults.find((x: { position: number}) => x.position === 1);
-      const position2 = this.leaderboardResults.find((x: { position: number}) => x.position === 2);
-      const position3 = this.leaderboardResults.find((x: { position: number}) => x.position === 3);
+      const position1 = this.leaderboardResults.filter((x: { position: number}) => x.position === 1);
+      const position2 = this.leaderboardResults.filter((x: { position: number}) => x.position === 2);
+      const position3 = this.leaderboardResults.filter((x: { position: number}) => x.position === 3);
 
-      if (position1 != undefined) {
-        name[1] = position1.playername;
-        achievementUnit[1] = position1.achievementunits;
-        avatar[1] = position1.playerimage;
+      if (position1.length === 1 && position2.length === 1 && position3.length === 3) this.validLeaderboard = true;
+      if (this.validLeaderboard) {
+        name[1] = position1[0].playername;
+        achievementUnit[1] = position1[0].achievementunits;
+        avatar[1] = position1[0].playerimage;
+
+        name[0] = position2[0].playername;
+        achievementUnit[0] = position2[0].achievementunits;
+        avatar[0] = position2[0].playerimage;
+
+        name[2] = position3[0].playername;
+        achievementUnit[2] = position3[0].achievementunits;
+        avatar[2] = position3[0].playerimage;
+
+        this.chart = printLeaderboard(name, achievementUnit, avatar, leaderboardId);
       }
-
-      if (position2 != undefined) {
-        name[0] = position2.playername;
-        achievementUnit[0] = position2.achievementunits;
-        avatar[0] = position2.playerimage;
-      }
-
-      if (position3 != undefined) {
-        name[2] = position3.playername;
-        achievementUnit[2] = position3.achievementunits;
-        avatar[2] = position3.playerimage;
-      }
-
-      this.chart = printLeaderboard(name, achievementUnit, avatar, leaderboardId);
-
     })
 
     function base64ToBlob(base64: string, mimeType: any) {
