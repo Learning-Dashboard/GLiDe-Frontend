@@ -4,8 +4,8 @@
     <mat-form-field style="margin-left: 20px">
       <mat-label>Enter a date range</mat-label>
       <mat-date-range-input [formGroup]="range" [rangePicker]="picker">
-        <input matStartDate formControlName="start" placeholder="Start date" (dateInput)="addEvent('input', $event)" (dateChange)="filterDates()">
-        <input matEndDate formControlName="end" placeholder="End date" (dateInput)="addEvent('input', $event)" (dateChange)="filterDates()">
+        <input matStartDate formControlName="start" placeholder="Start date" readonly (dateInput)="addEvent('input', $event)" (dateChange)="filterDates()">
+        <input matEndDate formControlName="end" placeholder="End date" readonly (dateInput)="addEvent('input', $event)" (dateChange)="filterDates()">
       </mat-date-range-input>
       <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
       <mat-date-range-picker #picker></mat-date-range-picker>
