@@ -390,8 +390,11 @@ export class ProjectmonitoringComponent {
   }
 
   filterDates() {
-    this.setDates();
-    this.historyProjectMetrics().subscribe((res) => this.getProjectMetricsHistorySubscriber(res));
+    if (this.range.value.end != null && this.range.value.start != null) {
+      this.setDates();
+      this.service.updateSelectedDates(this.player_name, this.startDate, this.endDate).subscribe((res) => {});
+      this.historyProjectMetrics().subscribe((res) => this.getProjectMetricsHistorySubscriber(res));
+    }
   }
 
   setDates(){
