@@ -461,15 +461,9 @@ export class ProjectmonitoringComponent {
         this.selectedMetrics = this.convertMetricNameToId(result.metrics);
         this.selectedHistoryMetrics = this.convertMetricNameToId(result.historyMetrics);
         this.selectedBarMetrics = this.convertMetricNameToId(result.barMetrics);
-        this.updateSelectedMetrics(this.selectedMetrics, this.selectedHistoryMetrics, this.selectedBarMetrics).pipe(switchMap(result => {
-          return forkJoin({
-            result2: this.getCategories(),
-            result3: this.historyProjectMetrics()
-          });
-        })).subscribe(({result2, result3}) => {
-          this.getProjectCategoriesSubscriber(result2);
-          this.getProjectMetricsHistorySubscriber(result3)
-        });
+        this.updateSelectedMetrics(this.selectedMetrics, this.selectedHistoryMetrics, this.selectedBarMetrics).subscribe((result) => {});
+        this.getCategories().subscribe((result) => { this.getProjectCategoriesSubscriber(result); });
+        this.historyProjectMetrics().subscribe((result) => { this.getProjectMetricsHistorySubscriber(result); });
         for (let gauge in this.gaugeChartTasks) {
           this.gaugeChartTasks[gauge].resize();
         }
