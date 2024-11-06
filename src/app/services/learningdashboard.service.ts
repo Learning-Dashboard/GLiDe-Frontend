@@ -72,6 +72,13 @@ export class LearningdashboardService {
     return this.http.patch(this.backUrl + '/players/' + player_name + '/monitoring/selectedMetrics', params);
   }
 
+  updateSelectedDates(player_name: string, startDate: string, endDate: string){
+    let params = new HttpParams()
+      .set('startDate', startDate)
+      .set('endDate', endDate);
+    return this.http.patch(this.backUrl + '/players/' + player_name + '/monitoring/selectedDates', params);
+  }
+
   getUsers() {
     return this.http.get(this.backUrl + '/players/individuals');
   }

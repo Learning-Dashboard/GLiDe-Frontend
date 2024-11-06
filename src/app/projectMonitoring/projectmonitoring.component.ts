@@ -127,20 +127,9 @@ export class ProjectmonitoringComponent {
         this.gaugeChartTasks[gauge].resize();
       }
     });
-
-    this.range.value.end = new Date();
-    this.range.value.start = new Date();
-    this.range.value.start.setDate(this.range.value.end.getDate() - 7);
-    this.range = new FormGroup({
-        start: new FormControl(this.range.value.start),
-        end: new FormControl(this.range.value.end)
-      }
-    );
-
-    this.filterDates();
-
     this.getSelectedMetrics().pipe(switchMap(result => {
       this.getSelectedMetricsSubscriber(result);
+      this.setDates();
       return forkJoin({
         result2: this.getCategories(),
         result3: this.historyProjectMetrics()
@@ -173,6 +162,12 @@ export class ProjectmonitoringComponent {
 
   private getSelectedMetricsSubscriber(result:any){
     let result_categories: any = result;
+    this.range.value.end = new Date(result.endDate);
+    this.range.value.start = new Date(result.startDate);
+    this.range = new FormGroup({
+      start: new FormControl(this.range.value.start),
+      end: new FormControl(this.range.value.end)
+    });
     let metrics = result_categories.selectedMetrics;
     if (metrics === "") this.selectedMetrics = [];
     else {
@@ -396,14 +391,19 @@ export class ProjectmonitoringComponent {
 
   filterDates() {
     if (this.range.value.end != null && this.range.value.start != null) {
-      this.endDate = this.range.value.end;
-      this.endDate.setMinutes(this.endDate.getMinutes() - this.endDate.getTimezoneOffset())
-      this.endDate = this.endDate.toJSON().substring(0,10);
-      this.startDate = this.range.value.start;
-      this.startDate.setMinutes(this.startDate.getMinutes() - this.startDate.getTimezoneOffset())
-      this.startDate = this.startDate.toJSON().substring(0,10);
+      this.setDates();
+      this.service.updateSelectedDates(this.player_name, this.startDate, this.endDate).subscribe((res) => {});
       this.historyProjectMetrics().subscribe((res) => this.getProjectMetricsHistorySubscriber(res));
     }
+  }
+
+  setDates(){
+    this.endDate = this.range.value.end;
+    this.endDate.setMinutes(this.endDate.getMinutes() - this.endDate.getTimezoneOffset())
+    this.endDate = this.endDate.toJSON().substring(0,10);
+    this.startDate = this.range.value.start;
+    this.startDate.setMinutes(this.startDate.getMinutes() - this.startDate.getTimezoneOffset())
+    this.startDate = this.startDate.toJSON().substring(0,10);
   }
 
   private createHistoryCharts() {
@@ -461,15 +461,9 @@ export class ProjectmonitoringComponent {
         this.selectedMetrics = this.convertMetricNameToId(result.metrics);
         this.selectedHistoryMetrics = this.convertMetricNameToId(result.historyMetrics);
         this.selectedBarMetrics = this.convertMetricNameToId(result.barMetrics);
-        this.updateSelectedMetrics(this.selectedMetrics, this.selectedHistoryMetrics, this.selectedBarMetrics).pipe(switchMap(result => {
-          return forkJoin({
-            result2: this.getCategories(),
-            result3: this.historyProjectMetrics()
-          });
-        })).subscribe(({result2, result3}) => {
-          this.getProjectCategoriesSubscriber(result2);
-          this.getProjectMetricsHistorySubscriber(result3)
-        });
+        this.updateSelectedMetrics(this.selectedMetrics, this.selectedHistoryMetrics, this.selectedBarMetrics).subscribe((result) => {});
+        this.getCategories().subscribe((result) => { this.getProjectCategoriesSubscriber(result); });
+        this.historyProjectMetrics().subscribe((result) => { this.getProjectMetricsHistorySubscriber(result); });
         for (let gauge in this.gaugeChartTasks) {
           this.gaugeChartTasks[gauge].resize();
         }
