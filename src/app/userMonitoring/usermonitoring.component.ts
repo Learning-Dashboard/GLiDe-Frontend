@@ -79,6 +79,7 @@ export class UsermonitoringComponent {
   private user_name: any;
   private user_name_Taiga: any;
   private user_name_GitHub: any;
+  private player_name: any;
 
   dropped(event: CdkDragDrop<string[]>) {
     moveItemInArray(this.items, event.previousIndex, event.currentIndex);
@@ -93,32 +94,28 @@ export class UsermonitoringComponent {
     this.user_name = localStorage.getItem("username");
     this.user_name_Taiga = localStorage.getItem("taigaUsername");
     this.user_name_GitHub = localStorage.getItem("githubUsername");
-
-    this.range.value.end = new Date();
-    this.range.value.start = new Date();
-    this.range.value.start.setDate(this.range.value.end.getDate() - 7);
-
-    this.range = new FormGroup({
-      start: new FormControl(this.range.value.start),
-      end: new FormControl(this.range.value.end)
-    });
+    this.player_name = localStorage.getItem("individualPlayername");
 
     this.notInitial = true;
-    this.filterDates();
 
-    this.service.getAllCategories().pipe(switchMap(result => {
-      this.allCategories = result;
-      return this.service.getProjectCategories(this.project_name).pipe(switchMap(result => {
-        this.result_categories = result;
-        let metricsWithCategories = this.result_categories?.map((item: any) => ({externalId: item.externalId, categoryName: item.categoryName}));
-        let categoryName : any;
-        for (let metric in this.metricsId) {
-          if (this.metricsId[metric] == "assignedtasks" || this.metricsId[metric] == "closedtasks") categoryName = metricsWithCategories.find((x: { externalId: string}) => x.externalId === this.metricsId[metric] + '_' + this.user_name_Taiga).categoryName;
-          if (this.metricsId[metric] == "modifiedlines" || this.metricsId[metric] == "commits") categoryName = metricsWithCategories.find((x: { externalId: string}) => x.externalId === this.metricsId[metric] + '_' + this.user_name_GitHub).categoryName;
-          let categoryInformation = this.categoryInformation(categoryName);
-          this.current_categories.push(categoryInformation);
-        }
-        return this.service.getMetrics(this.project_name);
+    this.getSelectedMetrics().pipe(switchMap(result => {
+      this.setSelectedRange(result);
+      this.setDates();
+      this.historyMetrics();
+      return this.service.getAllCategories().pipe(switchMap(result => {
+        this.allCategories = result;
+        return this.service.getProjectCategories(this.project_name).pipe(switchMap(result => {
+          this.result_categories = result;
+          let metricsWithCategories = this.result_categories?.map((item: any) => ({externalId: item.externalId, categoryName: item.categoryName}));
+          let categoryName : any;
+          for (let metric in this.metricsId) {
+            if (this.metricsId[metric] == "assignedtasks" || this.metricsId[metric] == "closedtasks") categoryName = metricsWithCategories.find((x: { externalId: string}) => x.externalId === this.metricsId[metric] + '_' + this.user_name_Taiga).categoryName;
+            if (this.metricsId[metric] == "modifiedlines" || this.metricsId[metric] == "commits") categoryName = metricsWithCategories.find((x: { externalId: string}) => x.externalId === this.metricsId[metric] + '_' + this.user_name_GitHub).categoryName;
+            let categoryInformation = this.categoryInformation(categoryName);
+            this.current_categories.push(categoryInformation);
+          }
+          return this.service.getMetrics(this.project_name);
+        }))
       }))
     })).subscribe(res => {
       this.result_metrics = res;
@@ -193,7 +190,19 @@ export class UsermonitoringComponent {
       this.pieChart(this.items[2], labelsModifiedLines, dataModifiedLines);
       this.pieChart(this.items[3], labelsCommits, dataCommits);
     });
-    this.historyMetrics();
+  }
+
+  private getSelectedMetrics() {
+    return this.service.getSelectedMetrics(this.player_name);
+  }
+
+  private setSelectedRange(result: any) {
+    this.range.value.end = new Date(result.endDate);
+    this.range.value.start = new Date(result.startDate);
+    this.range = new FormGroup({
+      start: new FormControl(this.range.value.start),
+      end: new FormControl(this.range.value.end)
+    });
   }
 
   private changeOption(value: number, categories: any[]) {
@@ -368,18 +377,20 @@ export class UsermonitoringComponent {
 
   filterDates() {
     if (this.range.value.end != null && this.range.value.start != null) {
-      this.endDate = this.range.value.end;
-      this.endDate.setMinutes(this.endDate.getMinutes() - this.endDate.getTimezoneOffset())
-      this.endDate = this.endDate.toJSON().substring(0,10);
-
-      this.startDate = this.range.value.start;
-      this.startDate.setMinutes(this.startDate.getMinutes() - this.startDate.getTimezoneOffset())
-      this.startDate = this.startDate.toJSON().substring(0,10);
-
-      if (!this.notInitial) this.historyMetrics();
+      this.setDates();
+      this.historyMetrics();
     }
   }
 
+  setDates(){
+    this.endDate = this.range.value.end;
+    this.endDate.setMinutes(this.endDate.getMinutes() - this.endDate.getTimezoneOffset())
+    this.endDate = this.endDate.toJSON().substring(0,10);
+
+    this.startDate = this.range.value.start;
+    this.startDate.setMinutes(this.startDate.getMinutes() - this.startDate.getTimezoneOffset())
+    this.startDate = this.startDate.toJSON().substring(0,10);
+  }
 
   historyMetrics(){
     this.service.getMetricsHistory(this.project_name, this.startDate, this.endDate).subscribe((res) => {
