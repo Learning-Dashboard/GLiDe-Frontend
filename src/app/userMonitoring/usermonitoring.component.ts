@@ -98,11 +98,11 @@ export class UsermonitoringComponent {
 
     this.notInitial = true;
 
-    this.getSelectedMetrics().pipe(switchMap(result => {
+    this.service.getSelectedMetrics(this.player_name).pipe(switchMap(result => {
       this.setSelectedRange(result);
       this.setDates();
       return forkJoin({
-        historyMetrics: this.historyMetrics(),
+        historyMetrics: this.service.getMetricsHistory(this.project_name, this.startDate, this.endDate),
         allCategories: this.service.getAllCategories()
       });
     }),
@@ -195,10 +195,6 @@ export class UsermonitoringComponent {
       this.pieChart(this.items[2], labelsModifiedLines, dataModifiedLines);
       this.pieChart(this.items[3], labelsCommits, dataCommits);
     });
-  }
-
-  private getSelectedMetrics() {
-    return this.service.getSelectedMetrics(this.player_name);
   }
 
   private setSelectedRange(result: any) {
@@ -384,7 +380,7 @@ export class UsermonitoringComponent {
     if (this.range.value.end != null && this.range.value.start != null) {
       this.setDates();
       this.service.updateSelectedDates(this.player_name, this.startDate, this.endDate).subscribe((res) => {});
-      this.historyMetrics().subscribe((res) => this.historyMetricsSubscriber(res));
+      this.service.getMetricsHistory(this.project_name, this.startDate, this.endDate).subscribe((res) => this.historyMetricsSubscriber(res));
     }
   }
 
@@ -396,10 +392,6 @@ export class UsermonitoringComponent {
     this.startDate = this.range.value.start;
     this.startDate.setMinutes(this.startDate.getMinutes() - this.startDate.getTimezoneOffset())
     this.startDate = this.startDate.toJSON().substring(0,10);
-  }
-
-  historyMetrics(){
-    return this.service.getMetricsHistory(this.project_name, this.startDate, this.endDate);
   }
 
   historyMetricsSubscriber(res:any){
