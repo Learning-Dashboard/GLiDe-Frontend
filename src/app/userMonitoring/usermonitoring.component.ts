@@ -379,7 +379,7 @@ export class UsermonitoringComponent {
     if (this.range.value.end != null && this.range.value.start != null) {
       this.setDates();
       this.service.updateSelectedDates(this.player_name, this.startDate, this.endDate).subscribe((res) => {});
-      this.historyMetrics();
+      this.historyMetrics().subscribe((res) => this.historyMetricsSubscriber(res));
     }
   }
 
@@ -394,64 +394,66 @@ export class UsermonitoringComponent {
   }
 
   historyMetrics(){
-    this.service.getMetricsHistory(this.project_name, this.startDate, this.endDate).subscribe((res) => {
-      this.history_metrics_result = res;
+    return this.service.getMetricsHistory(this.project_name, this.startDate, this.endDate);
+  }
 
-      this.history_metrics_result = res;
-      let metrics = [];
-      let student_name: string;
-      let metric_id: string;
-      let student_it = 0;
+  historyMetricsSubscriber(res:any){
+    this.history_metrics_result = res;
 
-      let labels: any[] = [];
-      let datasets: any = [];
+    this.history_metrics_result = res;
+    let metrics = [];
+    let student_name: string;
+    let metric_id: string;
+    let student_it = 0;
 
-      let labelsTasksHistory = [];
-      let labelsClosedTasksHistory = [];
-      let labelsModifiedLinesHistory = [];
-      let labelsCommitsHistory = [];
+    let labels: any[] = [];
+    let datasets: any = [];
 
-      let dataTasksHistory = [];
-      let dataClosedTasksHistory = [];
-      let dataModifiedLinesHistory = [];
-      let dataCommitsHistory = [];
+    let labelsTasksHistory = [];
+    let labelsClosedTasksHistory = [];
+    let labelsModifiedLinesHistory = [];
+    let labelsCommitsHistory = [];
 
-      for (let student in this.history_metrics_result) {
-        student_name = this.history_metrics_result[student].name;
-        metrics = this.history_metrics_result[student].metrics;
-        if (this.history_metrics_result[student].name != null) {
-          let dataTasksHistoryStudent = [];
-          let dataClosedTasksHistoryStudent = [];
-          let dataModifiedLinesHistoryStudent = [];
-          let dataCommitsHistoryStudent = [];
-          for (let metric in metrics) {
-            metric_id = this.history_metrics_result[student].metrics[metric].id;
-            metric_id = metric_id.substring(0, metric_id.indexOf('_'));
-            if (metric_id == 'assignedtasks') {
-              dataTasksHistoryStudent.push(this.history_metrics_result[student].metrics[metric].value * 100);
-              if (this.history_metrics_result[student].name == this.user_name) labelsTasksHistory.push(this.history_metrics_result[student].metrics[metric].date.split("-").reverse().join("-"));
-            } else if (metric_id == 'closedtasks') {
-              dataClosedTasksHistoryStudent.push(this.history_metrics_result[student].metrics[metric].value * 100);
-              if (this.history_metrics_result[student].name == this.user_name) labelsClosedTasksHistory.push(this.history_metrics_result[student].metrics[metric].date.split("-").reverse().join("-"));
-            } else if (metric_id == 'modifiedlines') {
-              dataModifiedLinesHistoryStudent.push(this.history_metrics_result[student].metrics[metric].value * 100);
-              if (this.history_metrics_result[student].name == this.user_name) labelsModifiedLinesHistory.push(this.history_metrics_result[student].metrics[metric].date.split("-").reverse().join("-"));
-            } else if (metric_id == 'commits') {
-              dataCommitsHistoryStudent.push(this.history_metrics_result[student].metrics[metric].value * 100);
-              if (this.history_metrics_result[student].name == this.user_name) labelsCommitsHistory.push(this.history_metrics_result[student].metrics[metric].date.split("-").reverse().join("-"));
-            }
+    let dataTasksHistory = [];
+    let dataClosedTasksHistory = [];
+    let dataModifiedLinesHistory = [];
+    let dataCommitsHistory = [];
+
+    for (let student in this.history_metrics_result) {
+      student_name = this.history_metrics_result[student].name;
+      metrics = this.history_metrics_result[student].metrics;
+      if (this.history_metrics_result[student].name != null) {
+        let dataTasksHistoryStudent = [];
+        let dataClosedTasksHistoryStudent = [];
+        let dataModifiedLinesHistoryStudent = [];
+        let dataCommitsHistoryStudent = [];
+        for (let metric in metrics) {
+          metric_id = this.history_metrics_result[student].metrics[metric].id;
+          metric_id = metric_id.substring(0, metric_id.indexOf('_'));
+          if (metric_id == 'assignedtasks') {
+            dataTasksHistoryStudent.push(this.history_metrics_result[student].metrics[metric].value * 100);
+            if (this.history_metrics_result[student].name == this.user_name) labelsTasksHistory.push(this.history_metrics_result[student].metrics[metric].date.split("-").reverse().join("-"));
+          } else if (metric_id == 'closedtasks') {
+            dataClosedTasksHistoryStudent.push(this.history_metrics_result[student].metrics[metric].value * 100);
+            if (this.history_metrics_result[student].name == this.user_name) labelsClosedTasksHistory.push(this.history_metrics_result[student].metrics[metric].date.split("-").reverse().join("-"));
+          } else if (metric_id == 'modifiedlines') {
+            dataModifiedLinesHistoryStudent.push(this.history_metrics_result[student].metrics[metric].value * 100);
+            if (this.history_metrics_result[student].name == this.user_name) labelsModifiedLinesHistory.push(this.history_metrics_result[student].metrics[metric].date.split("-").reverse().join("-"));
+          } else if (metric_id == 'commits') {
+            dataCommitsHistoryStudent.push(this.history_metrics_result[student].metrics[metric].value * 100);
+            if (this.history_metrics_result[student].name == this.user_name) labelsCommitsHistory.push(this.history_metrics_result[student].metrics[metric].date.split("-").reverse().join("-"));
           }
-          dataTasksHistory.push({label: this.history_metrics_result[student].name, data: dataTasksHistoryStudent.reverse()});
-          dataClosedTasksHistory.push({label: this.history_metrics_result[student].name, data: dataClosedTasksHistoryStudent.reverse()});
-          dataModifiedLinesHistory.push({label: this.history_metrics_result[student].name, data: dataModifiedLinesHistoryStudent.reverse()});
-          dataCommitsHistory.push({label: this.history_metrics_result[student].name, data: dataCommitsHistoryStudent.reverse()});
         }
-        student_it += 1;
+        dataTasksHistory.push({label: this.history_metrics_result[student].name, data: dataTasksHistoryStudent.reverse()});
+        dataClosedTasksHistory.push({label: this.history_metrics_result[student].name, data: dataClosedTasksHistoryStudent.reverse()});
+        dataModifiedLinesHistory.push({label: this.history_metrics_result[student].name, data: dataModifiedLinesHistoryStudent.reverse()});
+        dataCommitsHistory.push({label: this.history_metrics_result[student].name, data: dataCommitsHistoryStudent.reverse()});
       }
-      labels.push(labelsTasksHistory, labelsClosedTasksHistory, labelsModifiedLinesHistory, labelsCommitsHistory);
-      datasets.push(dataTasksHistory, dataClosedTasksHistory, dataModifiedLinesHistory, dataCommitsHistory);
-      this.updateLineCharts(labels, datasets);
-    })
+      student_it += 1;
+    }
+    labels.push(labelsTasksHistory, labelsClosedTasksHistory, labelsModifiedLinesHistory, labelsCommitsHistory);
+    datasets.push(dataTasksHistory, dataClosedTasksHistory, dataModifiedLinesHistory, dataCommitsHistory);
+    this.updateLineCharts(labels, datasets);
   }
 
   updateLineCharts(labels: any[], datasets: any[]){
