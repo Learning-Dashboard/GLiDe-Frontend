@@ -127,12 +127,12 @@ export class ProjectmonitoringComponent {
         this.gaugeChartTasks[gauge].resize();
       }
     });
-    this.getSelectedMetrics().pipe(switchMap(result => {
+    this.service.getSelectedMetrics(this.player_name).pipe(switchMap(result => {
       this.getSelectedMetricsSubscriber(result);
       this.setDates();
       return forkJoin({
         result2: this.getCategories(),
-        result3: this.historyProjectMetrics()
+        result3: this.service.getProjectMetricsHistory(this.project_name, this.startDate, this.endDate)
       });
     })).subscribe(({ result2, result3 }) => {
       this.getProjectCategoriesSubscriber(result2);
@@ -154,10 +154,6 @@ export class ProjectmonitoringComponent {
       metricNames.push(<string>Object.keys(this.metricNameDictionary).find(key => this.metricNameDictionary[key] === metrics[metric]));
     }
     return metricNames;
-  }
-
-  private getSelectedMetrics() {
-    return this.service.getSelectedMetrics(this.player_name);
   }
 
   private getSelectedMetricsSubscriber(result:any){
@@ -363,10 +359,6 @@ export class ProjectmonitoringComponent {
     };
   }
 
-  private historyProjectMetrics(){
-    return this.service.getProjectMetricsHistory(this.project_name, this.startDate, this.endDate);
-  }
-
   private getProjectMetricsHistorySubscriber(res: any){
     let result: any;
     result = res;
@@ -393,7 +385,7 @@ export class ProjectmonitoringComponent {
     if (this.range.value.end != null && this.range.value.start != null) {
       this.setDates();
       this.service.updateSelectedDates(this.player_name, this.startDate, this.endDate).subscribe((res) => {});
-      this.historyProjectMetrics().subscribe((res) => this.getProjectMetricsHistorySubscriber(res));
+      this.service.getProjectMetricsHistory(this.project_name, this.startDate, this.endDate).subscribe((res) => this.getProjectMetricsHistorySubscriber(res));
     }
   }
 
@@ -463,7 +455,7 @@ export class ProjectmonitoringComponent {
         this.selectedBarMetrics = this.convertMetricNameToId(result.barMetrics);
         this.updateSelectedMetrics(this.selectedMetrics, this.selectedHistoryMetrics, this.selectedBarMetrics).subscribe((result) => {});
         this.getCategories().subscribe((result) => { this.getProjectCategoriesSubscriber(result); });
-        this.historyProjectMetrics().subscribe((result) => { this.getProjectMetricsHistorySubscriber(result); });
+        this.service.getProjectMetricsHistory(this.project_name, this.startDate, this.endDate).subscribe((result) => { this.getProjectMetricsHistorySubscriber(result); });
         for (let gauge in this.gaugeChartTasks) {
           this.gaugeChartTasks[gauge].resize();
         }
