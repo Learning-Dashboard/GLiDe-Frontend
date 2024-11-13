@@ -2,5 +2,6 @@ import { Routes } from '@angular/router';
 import {MonitoringtabsComponent} from "./monitoringTabs/monitoringtabs.component";
 import {GamificationtabsComponent} from "./gamificationTabs/gamificationtabs.component";
 import {UserComponent} from "./user/user.component";
+import {LoginComponent} from "./login/login.component";
 
-export const routes: Routes = [{path: 'monitoring', component: MonitoringtabsComponent},{path: 'gamification', component: GamificationtabsComponent},{path: 'profile', component: UserComponent}];
+export const routes: Routes = [{path: 'monitoring', component: MonitoringtabsComponent},{path: 'gamification', component: GamificationtabsComponent},{path: 'profile', component: UserComponent},{path: '', component: LoginComponent}];
