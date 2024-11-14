@@ -28,7 +28,7 @@ export class LoginComponent {
   handleOauthResponse(response: any): void {
     const responsePayload = this.decodeJWTToken(response.credential);
     console.log(responsePayload);
-    sessionStorage.setItem('loggedinUser', JSON.stringify(responsePayload));
+    sessionStorage.setItem('loggedUser', JSON.stringify(responsePayload));
   }
 
   loadGoogleScript(): Promise<void> {
