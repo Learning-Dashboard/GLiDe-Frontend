@@ -1,4 +1,5 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, Injector, NgZone, OnInit} from '@angular/core';
+import {Router} from "@angular/router";
 
 @Component({
   selector: 'app-login',
@@ -9,6 +10,8 @@ import {Component, OnInit} from '@angular/core';
 })
 export class LoginComponent {
   private scriptLoaded = false;
+
+  constructor(private injector: Injector) { }
 
   ngOnInit(): void {
     (window as any).handleOauthResponse = this.handleOauthResponse.bind(this);
@@ -28,7 +31,12 @@ export class LoginComponent {
   handleOauthResponse(response: any): void {
     const responsePayload = this.decodeJWTToken(response.credential);
     console.log(responsePayload);
-    sessionStorage.setItem('loggedUser', JSON.stringify(responsePayload));
+    localStorage.setItem('loggedUser', JSON.stringify(responsePayload));
+    const routerService = this.injector.get(Router);
+    const ngZone = this.injector.get(NgZone);
+    ngZone.run(() =>{
+      routerService.navigate(['/profile']);
+    });
   }
 
   loadGoogleScript(): Promise<void> {

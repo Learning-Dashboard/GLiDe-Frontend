@@ -4,4 +4,10 @@ import {GamificationtabsComponent} from "./gamificationTabs/gamificationtabs.com
 import {UserComponent} from "./user/user.component";
 import {LoginComponent} from "./login/login.component";
 
-export const routes: Routes = [{path: 'monitoring', component: MonitoringtabsComponent},{path: 'gamification', component: GamificationtabsComponent},{path: 'profile', component: UserComponent},{path: '', component: LoginComponent}];
+export const routes: Routes = [
+  {path: 'monitoring', component: MonitoringtabsComponent},
+  {path: 'gamification', component: GamificationtabsComponent},
+  {path: 'profile', component: UserComponent},
+  {path: 'login', component: LoginComponent},
+  {path: '', redirectTo: 'login', pathMatch: 'full'}
+];
