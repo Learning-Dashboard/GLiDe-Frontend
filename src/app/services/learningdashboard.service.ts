@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import {HttpClient, HttpParams} from "@angular/common/http";
+import {HttpClient, HttpHeaders, HttpParams} from "@angular/common/http";
 
 @Injectable({
   providedIn: 'root'
@@ -96,5 +96,11 @@ export class LearningdashboardService {
       .set('attained', attained)
       .set('category', category);
     return this.http.get(this.backUrl + '/gamification/players/' + player_name + '/achievements', {params: params});
+  }
+
+  postLogin(idToken: string){
+    let headers = new HttpHeaders()
+      .set('Authorization',idToken);
+    return this.http.post(this.backUrl + '/students/login',{}, {headers: headers, observe: 'response'});
   }
 }
