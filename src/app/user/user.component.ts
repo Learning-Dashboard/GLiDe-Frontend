@@ -177,16 +177,19 @@ export class UserComponent {
   constructor(private service: LearningdashboardService) {}
 
   ngOnInit(): void {
-    this.service.getUsers().subscribe((res) => {
-      this.result = res;
-      //this.metrics = this.result.map((item: any) => item.value);
-      //this.dates = this.result.map((item: any) => item.date);
+    let idToken = localStorage.getItem('idToken');
+    if (idToken) {
+      this.service.getStudentPlayers(idToken).subscribe((res) => {
+        this.result = res;
+        //this.metrics = this.result.map((item: any) => item.value);
+        //this.dates = this.result.map((item: any) => item.date);
 
-      console.log(this.result);
-      //console.log(this.metrics);
-      //console.log(this.dates);
+        console.log(this.result);
+        //console.log(this.metrics);
+        //console.log(this.dates);
 
-    })
+      })
+    }
   }
 
 }

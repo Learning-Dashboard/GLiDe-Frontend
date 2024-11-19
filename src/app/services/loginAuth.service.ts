@@ -9,7 +9,15 @@ export class LoginAuthService {
   constructor(public router: Router) { }
 
   canActivate(): boolean {
-    if (localStorage.getItem('loggedUser')) {
+    let user = localStorage.getItem('loggedUser');
+    if (user) {
+      let token = JSON.parse(user);
+      let currentDate = Math.floor(Date.now() / 1000);
+      if(!token.exp || token.exp < currentDate){
+        localStorage.clear();
+        this.router.navigate(['login']);
+        return false;
+      }
       return true;
     }
     this.router.navigate(['login']);

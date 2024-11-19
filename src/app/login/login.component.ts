@@ -34,6 +34,7 @@ export class LoginComponent {
     this.service.postLogin(response.credential).subscribe((result) => {
       if(result.status === 200){
         localStorage.setItem('loggedUser', JSON.stringify(responsePayload));
+        localStorage.setItem('idToken', response.credential);
         const routerService = this.injector.get(Router);
         const ngZone = this.injector.get(NgZone);
         ngZone.run(() =>{

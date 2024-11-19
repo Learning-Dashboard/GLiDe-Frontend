@@ -103,4 +103,10 @@ export class LearningdashboardService {
       .set('Authorization',idToken);
     return this.http.post(this.backUrl + '/students/login',{}, {headers: headers, observe: 'response'});
   }
+
+  getStudentPlayers(idToken: string){
+    let headers = new HttpHeaders()
+      .set('Authorization',idToken);
+    return this.http.get(this.backUrl + '/students/players', {headers: headers});
+  }
 }
