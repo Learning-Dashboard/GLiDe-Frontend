@@ -240,7 +240,7 @@ export class UsermonitoringComponent {
           type: 'gauge',
           startAngle: 180,
           endAngle: 0,
-          center: ['50%', 50 + window.innerWidth/75 + '%'],
+          center: ['50%', 50 + Math.min(window.innerWidth/75, 25) + '%'],
           radius: '100%',
           min: 0,
           max: 1,
