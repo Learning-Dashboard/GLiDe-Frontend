@@ -81,6 +81,16 @@ export class UsermonitoringComponent {
   private user_name_GitHub: any;
   private player_name: any;
 
+  private chartDomTasks: any;
+  private chartDomClosedTasks: any;
+  private chartDomModifiedLines: any;
+  private chartDomCommits: any;
+
+  private gaugeChartTasks: any;
+  private gaugeChartClosedTasks: any;
+  private gaugeChartModifiedLines: any;
+  private gaugeChartCommits: any;
+
   dropped(event: CdkDragDrop<string[]>) {
     moveItemInArray(this.items, event.previousIndex, event.currentIndex);
     console.log('DROPPED');
@@ -95,6 +105,22 @@ export class UsermonitoringComponent {
     this.user_name_Taiga = localStorage.getItem("taigaUsername");
     this.user_name_GitHub = localStorage.getItem("githubUsername");
     this.player_name = localStorage.getItem("individualPlayername");
+
+    window.addEventListener("resize", () => {
+      this.gaugeChartTasks.resize();
+      this.gaugeChartClosedTasks.resize();
+      this.gaugeChartModifiedLines.resize();
+      this.gaugeChartCommits.resize();
+
+      const optionTasks = this.changeOption(this.current_metrics[0], this.current_categories[0]);
+      this.gaugeChartTasks.setOption(optionTasks);
+      const optionClosedTasks = this.changeOption(this.current_metrics[1], this.current_categories[1]);
+      this.gaugeChartClosedTasks.setOption(optionClosedTasks);
+      const optionModifiedLines = this.changeOption(this.current_metrics[2], this.current_categories[2]);
+      this.gaugeChartModifiedLines.setOption(optionModifiedLines);
+      const optionCommits = this.changeOption(this.current_metrics[3], this.current_categories[3]);
+      this.gaugeChartCommits.setOption(optionCommits);
+    });
 
     this.notInitial = true;
 
@@ -214,7 +240,7 @@ export class UsermonitoringComponent {
           type: 'gauge',
           startAngle: 180,
           endAngle: 0,
-          center: ['50%', '75%'],
+          center: ['50%', 50 + Math.min(window.innerWidth/75, 25) + '%'],
           radius: '100%',
           min: 0,
           max: 1,
@@ -228,21 +254,21 @@ export class UsermonitoringComponent {
           pointer: {
             icon: 'path://M12.8,0.7l12,40.1H0.7L12.8,0.7z',
             length: '12%',
-            width: 20,
+            width: (window.innerWidth)/100,
             offsetCenter: [0, '-60%'],
             itemStyle: {
               color: 'black'
             }
           },
           axisTick: {
-            length: 12,
+            length: (window.innerWidth)/160,
             lineStyle: {
               color: 'auto',
               width: 2
             }
           },
           splitLine: {
-            length: 20,
+            length: (window.innerWidth)/100,
             lineStyle: {
               color: 'auto',
               width: 5
@@ -268,10 +294,10 @@ export class UsermonitoringComponent {
           },
           title: {
             offsetCenter: [0, '-5%'],
-            fontSize: 15
+            fontSize: (window.innerWidth)/110
           },
           detail: {
-            fontSize: 35,
+            fontSize: (window.innerWidth)/60,
             offsetCenter: [0, '-25%'],
             valueAnimation: true,
             formatter: function (value: number) {
@@ -293,25 +319,25 @@ export class UsermonitoringComponent {
   }
 
   private updateCharts() {
-    const chartDomTasks = document.getElementById('gaugeChart_' + this.items[0])!;
-    let gaugeChartTasks = echarts.init(chartDomTasks);
+    this.chartDomTasks = document.getElementById('gaugeChart_' + this.items[0])!;
+    this.gaugeChartTasks = echarts.init(this.chartDomTasks);
     const optionTasks = this.changeOption(this.current_metrics[0], this.current_categories[0]);
-    optionTasks && gaugeChartTasks.setOption(optionTasks);
+    optionTasks && this.gaugeChartTasks.setOption(optionTasks);
 
-    const chartDomClosedTasks = document.getElementById('gaugeChart_' + this.items[1])!;
-    let gaugeChartClosedTasks = echarts.init(chartDomClosedTasks);
+    this.chartDomClosedTasks = document.getElementById('gaugeChart_' + this.items[1])!;
+    this.gaugeChartClosedTasks = echarts.init(this.chartDomClosedTasks);
     const optionClosedTasks = this.changeOption(this.current_metrics[1], this.current_categories[1]);
-    optionClosedTasks && gaugeChartClosedTasks.setOption(optionClosedTasks);
+    optionClosedTasks && this.gaugeChartClosedTasks.setOption(optionClosedTasks);
 
-    const chartDomModifiedLines = document.getElementById('gaugeChart_' + this.items[2])!;
-    let gaugeChartModifiedLines = echarts.init(chartDomModifiedLines);
+    this.chartDomModifiedLines = document.getElementById('gaugeChart_' + this.items[2])!;
+    this.gaugeChartModifiedLines = echarts.init(this.chartDomModifiedLines);
     const optionModifiedLines = this.changeOption(this.current_metrics[2], this.current_categories[2]);
-    optionModifiedLines && gaugeChartModifiedLines.setOption(optionModifiedLines);
+    optionModifiedLines && this.gaugeChartModifiedLines.setOption(optionModifiedLines);
 
-    const chartDomCommits = document.getElementById('gaugeChart_' + this.items[3])!;
-    let gaugeChartCommits = echarts.init(chartDomCommits);
+    this.chartDomCommits = document.getElementById('gaugeChart_' + this.items[3])!;
+    this.gaugeChartCommits = echarts.init(this.chartDomCommits);
     const optionCommits = this.changeOption(this.current_metrics[3], this.current_categories[3]);
-    optionCommits && gaugeChartCommits.setOption(optionCommits);
+    optionCommits && this.gaugeChartCommits.setOption(optionCommits);
   }
 
   pieChart(id: string, labels: any, data: any) {
