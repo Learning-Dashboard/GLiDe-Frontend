@@ -1,6 +1,7 @@
 import {Component, Injector, NgZone, OnInit} from '@angular/core';
 import {Router} from "@angular/router";
 import {LearningdashboardService} from "../services/learningdashboard.service";
+import {ToastrService} from "ngx-toastr";
 
 @Component({
   selector: 'app-login',
@@ -12,7 +13,7 @@ import {LearningdashboardService} from "../services/learningdashboard.service";
 export class LoginComponent {
   private scriptLoaded = false;
 
-  constructor(private injector: Injector, private service: LearningdashboardService) { }
+  constructor(private injector: Injector, private service: LearningdashboardService, private toastr: ToastrService) { }
 
   ngOnInit(): void {
     (window as any).handleOauthResponse = this.handleOauthResponse.bind(this);
@@ -32,7 +33,7 @@ export class LoginComponent {
   handleOauthResponse(response: any): void {
     const responsePayload = this.decodeJWTToken(response.credential);
     this.service.postLogin(response.credential).subscribe((result) => {
-      if(result.status === 200){
+      if (result.status === 200){
         localStorage.setItem('loggedUser', JSON.stringify(responsePayload));
         localStorage.setItem('idToken', response.credential);
         const routerService = this.injector.get(Router);
@@ -41,6 +42,8 @@ export class LoginComponent {
           routerService.navigate(['/profile']);
         });
       }
+      else if (result.status === 404) this.toastr.error('The user does not exist', 'Log in failed');
+      else if (result.status === 401) this.toastr.error('Failed to verify user', 'Log in failed');
     })
   }
 
