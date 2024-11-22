@@ -1,22 +1,25 @@
 <mat-card class="card">
   <mat-card-header>
-    <mat-card-title>Select user</mat-card-title>
+    <mat-card-title>Select User</mat-card-title>
   </mat-card-header>
-  <mat-card-content style="margin-top: 10px;">
+  <mat-card-content class="card-content">
     <mat-radio-group [(ngModel)]="selectedPlayer" (ngModelChange)="onSubmit()" *ngIf="players && teams">
       <div *ngFor="let res of result; let i = index" class="row">
         <div class="col">
           <mat-radio-button color="primary" [value]="res.playername">
             <div class="radio-content">
               <img mat-card-avatar [src]="players[i].avatar" alt="avatar" class="avatar">
-              <span>{{ res.playername }}</span>
-              <span>{{ players[i].role }}</span>
-              <span>{{ players[i].level }}</span>
-              <span>{{ players[i].points }}</span>
+              <span class="name">{{ res.playername }}</span>
+              <div class="details">
+                <span class="level">Level: {{ players[i].level }}</span>
+                <span class="points">Points: {{ players[i].points }}</span>
+              </div>
               <img mat-card-avatar [src]="teams[i].logo" alt="logo" class="avatar">
-              <span>{{ teams[i].playername }}</span>
-              <span>{{ teams[i].level }}</span>
-              <span>{{ teams[i].points }}</span>
+              <span class="team-name">{{ teams[i].playername }}</span>
+              <div class="details">
+                <span class="team-level">Team Level: {{ teams[i].level }}</span>
+                <span class="team-points">Team Points: {{ teams[i].points }}</span>
+              </div>
             </div>
           </mat-radio-button>
         </div>

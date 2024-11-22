@@ -215,6 +215,10 @@ export class UserComponent {
 
         let selectedPlayer = localStorage.getItem('selectedPlayer');
         if (selectedPlayer) this.selectedPlayer = selectedPlayer;
+        else if (this.result.length !== 0){
+          this.selectedPlayer = this.result[0].playername;
+          this.saveUserData();
+        }
       });
     }
   }
