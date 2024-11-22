@@ -1,12 +1,15 @@
 import {Component, ElementRef, inject} from '@angular/core';
 
-import { ReactiveFormsModule, FormBuilder, Validators } from '@angular/forms';
+import {ReactiveFormsModule, FormBuilder, Validators, FormsModule} from '@angular/forms';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { MatSelectModule } from '@angular/material/select';
 import { MatRadioModule } from '@angular/material/radio';
 import { MatCardModule } from '@angular/material/card';
 import {LearningdashboardService} from "../services/learningdashboard.service";
+import {forkJoin, switchMap} from "rxjs";
+import {DomSanitizer} from "@angular/platform-browser";
+import {NgForOf, NgIf} from "@angular/common";
 
 
 
@@ -22,14 +25,18 @@ import {LearningdashboardService} from "../services/learningdashboard.service";
     MatSelectModule,
     MatRadioModule,
     MatCardModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    FormsModule,
+    NgIf,
+    NgForOf
   ]
 })
 export class UserComponent {
   private fb = inject(FormBuilder);
   protected result : any;
   protected gamification : any;
-  private players : any;
+  protected players : any;
+  protected teams : any;
 
   protected selectedPlayer: any;
 
@@ -114,24 +121,12 @@ export class UserComponent {
 
   onSubmit(): void {
     this.saveUserData();
-    alert('Thanks!');
-
   }
 
   saveUserData(): void {
-    console.log('saveUserData');
-    console.log(this.selectedPlayer);
-    console.log('points');
-
-    console.log("Result");
-    console.log(this.result);
-
     let points = this.result.find((x: { playername: string}) => x.playername === this.selectedPlayer).points;
     //categoryName = metricsWithCategories.find((x: { externalId: string}) => x.externalId === this.selectedMetrics[metric]).categoryName;
     let level = this.result.find((x: { playername: string}) => x.playername === this.selectedPlayer).level;
-    console.log(points);
-    console.log('level');
-    console.log(level);
     localStorage.setItem('selectedPlayer', this.selectedPlayer);
 
     localStorage.setItem('username', this.result.find((x: { playername: string}) => x.playername === this.selectedPlayer).learningdashboardUsername);
@@ -141,54 +136,54 @@ export class UserComponent {
     localStorage.setItem('teamPlayername', this.result.find((x: { playername: string}) => x.playername === this.selectedPlayer).teamPlayername);
     localStorage.setItem('individualPlayername', this.result.find((x: { playername: string}) => x.playername === this.selectedPlayer).playername);
 
-
-    console.log('SelectedPlayer');
-
     let individualPlayername: any;
 
     individualPlayername = localStorage.getItem('individualPlayername');
-
-    console.log(localStorage.getItem('selectedPlayer'));
-    console.log(localStorage.getItem('githubUsername'));
-    console.log(localStorage.getItem('taigaUsername'));
-    console.log(localStorage.getItem('project'));
-    console.log(localStorage.getItem('teamPlayername'));
-    console.log(localStorage.getItem('individualPlayername'));
 
     this.service.getPlayerGamification(individualPlayername).subscribe((res) => {
       this.gamification = res;
       //this.metrics = this.result.map((item: any) => item.value);
       //this.dates = this.result.map((item: any) => item.date);
-      console.log("Gamification");
-      console.log(this.gamification);
-
       localStorage.setItem('teamLeaderboardId', this.gamification.teamLeaderboardId);
       localStorage.setItem('individualLeaderboardId', this.gamification.individualLeaderboardId);
-
-      console.log(localStorage.getItem('teamLeaderboardId'));
-      console.log(localStorage.getItem('individualLeaderboardId'));
-      //console.log(this.metrics);
-      //console.log(this.dates);
 
     });
 
   }
 
-  constructor(private service: LearningdashboardService) {}
+  constructor(private service: LearningdashboardService, private sanitizer: DomSanitizer) {}
 
   ngOnInit(): void {
     let idToken = localStorage.getItem('idToken');
     if (idToken) {
-      this.service.getStudentPlayers(idToken).subscribe((res) => {
+      this.service.getStudentPlayers(idToken).pipe(switchMap((res) => {
         this.result = res;
+
         //this.metrics = this.result.map((item: any) => item.value);
         //this.dates = this.result.map((item: any) => item.date);
 
-        console.log(this.result);
-        //console.log(this.metrics);
-        //console.log(this.dates);
+        return forkJoin({
+          players: forkJoin(this.result.map((player:any) => this.service.getIndividualPlayer(player.playername))),
+          teams: forkJoin(this.result.map((player:any) => this.service.getTeamPlayer(player.teamPlayername)))
+        });
 
-      })
+      })).subscribe(({players, teams}) => {
+        this.players = players;
+        for (let player in this.players){
+          this.players[player].avatar = this.sanitizer.bypassSecurityTrustResourceUrl('data:image/jpg;base64,' + this.players[player].avatar);
+        }
+        this.teams = teams;
+        for (let team in this.teams){
+          this.teams[team].logo = this.sanitizer.bypassSecurityTrustResourceUrl('data:image/jpg;base64,' + this.teams[team].logo);
+        }
+
+        let selectedPlayer = localStorage.getItem('selectedPlayer');
+        if (selectedPlayer) this.selectedPlayer = selectedPlayer;
+        else if (this.result.length !== 0){
+          this.selectedPlayer = this.result[0].playername;
+          this.saveUserData();
+        }
+      });
     }
   }
 

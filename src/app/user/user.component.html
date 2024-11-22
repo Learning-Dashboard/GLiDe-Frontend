@@ -1,42 +1,29 @@
-<form [formGroup]="addressForm" novalidate (ngSubmit)="onSubmit()">
-  <mat-card class="card">
-    <mat-card-header>
-      <mat-card-title>Select user</mat-card-title>
-    </mat-card-header>
-    <mat-card-content>
-      <!--
-      <div class="row">
+<mat-card class="card">
+  <mat-card-header>
+    <mat-card-title>Select User</mat-card-title>
+  </mat-card-header>
+  <mat-card-content class="card-content">
+    <mat-radio-group [(ngModel)]="selectedPlayer" (ngModelChange)="onSubmit()" *ngIf="players && teams">
+      <div *ngFor="let res of result; let i = index" class="row">
         <div class="col">
-          <mat-form-field class="full-width">
-            <mat-select placeholder="State" formControlName="state">
-              @for (state of states; track state) {
-                <mat-option [value]="state.abbreviation">{{ state.name }}</mat-option>
-              }
-            </mat-select>
-            @if (addressForm.controls['state'].hasError('required')) {
-              <mat-error>State is <strong>required</strong></mat-error>
-            }
-          </mat-form-field>
+          <mat-radio-button color="primary" [value]="res.playername">
+            <div class="radio-content">
+              <img mat-card-avatar [src]="players[i].avatar" alt="avatar" class="avatar">
+              <span class="name">{{ res.playername }}</span>
+              <div class="details">
+                <span class="level">Level: {{ players[i].level }}</span>
+                <span class="points">Points: {{ players[i].points }}</span>
+              </div>
+              <img mat-card-avatar [src]="teams[i].logo" alt="logo" class="avatar">
+              <span class="team-name">{{ teams[i].playername }}</span>
+              <div class="details">
+                <span class="team-level">Team Level: {{ teams[i].level }}</span>
+                <span class="team-points">Team Points: {{ teams[i].points }}</span>
+              </div>
+            </div>
+          </mat-radio-button>
         </div>
       </div>
-      -->
-      <div class="row">
-        <div class="col">
-          <mat-form-field class="full-width">
-            <mat-select [(ngModel)]="selectedPlayer" placeholder="User" formControlName="user">
-              @for (res of result; track res) {
-                <mat-option [value]="res.playername">{{ res.playername }}</mat-option>
-              }
-            </mat-select>
-            @if (addressForm.controls['state'].hasError('required')) {
-              <mat-error>State is <strong>required</strong></mat-error>
-            }
-          </mat-form-field>
-        </div>
-      </div>
-    </mat-card-content>
-    <mat-card-actions>
-      <button mat-raised-button color="primary" type="submit">Submit</button>
-    </mat-card-actions>
-  </mat-card>
-</form>
+    </mat-radio-group>
+  </mat-card-content>
+</mat-card>
