@@ -7,6 +7,9 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatRadioModule } from '@angular/material/radio';
 import { MatCardModule } from '@angular/material/card';
 import {LearningdashboardService} from "../services/learningdashboard.service";
+import {forkJoin, switchMap} from "rxjs";
+import {DomSanitizer} from "@angular/platform-browser";
+import {NgForOf, NgIf} from "@angular/common";
 
 
 
@@ -23,14 +26,17 @@ import {LearningdashboardService} from "../services/learningdashboard.service";
     MatRadioModule,
     MatCardModule,
     ReactiveFormsModule,
-    FormsModule
+    FormsModule,
+    NgIf,
+    NgForOf
   ]
 })
 export class UserComponent {
   private fb = inject(FormBuilder);
   protected result : any;
   protected gamification : any;
-  private players : any;
+  protected players : any;
+  protected teams : any;
 
   protected selectedPlayer: any;
 
@@ -173,15 +179,14 @@ export class UserComponent {
 
   }
 
-  constructor(private service: LearningdashboardService) {}
+  constructor(private service: LearningdashboardService, private sanitizer: DomSanitizer) {}
 
   ngOnInit(): void {
     let idToken = localStorage.getItem('idToken');
     if (idToken) {
-      this.service.getStudentPlayers(idToken).subscribe((res) => {
+      this.service.getStudentPlayers(idToken).pipe(switchMap((res) => {
         this.result = res;
-        let selectedPlayer = localStorage.getItem('selectedPlayer');
-        if (selectedPlayer) this.selectedPlayer = selectedPlayer;
+
         //this.metrics = this.result.map((item: any) => item.value);
         //this.dates = this.result.map((item: any) => item.date);
 
@@ -189,7 +194,28 @@ export class UserComponent {
         //console.log(this.metrics);
         //console.log(this.dates);
 
-      })
+        return forkJoin({
+          players: forkJoin(this.result.map((player:any) => this.service.getIndividualPlayer(player.playername))),
+          teams: forkJoin(this.result.map((player:any) => this.service.getTeamPlayer(player.teamPlayername)))
+        });
+
+      })).subscribe(({players, teams}) => {
+        console.log("PLAYERS");
+        console.log(players);
+        this.players = players;
+        for (let player in this.players){
+          this.players[player].avatar = this.sanitizer.bypassSecurityTrustResourceUrl('data:image/jpg;base64,' + this.players[player].avatar);
+        }
+        console.log("TEAMS");
+        console.log(teams);
+        this.teams = teams;
+        for (let team in this.teams){
+          this.teams[team].logo = this.sanitizer.bypassSecurityTrustResourceUrl('data:image/jpg;base64,' + this.teams[team].logo);
+        }
+
+        let selectedPlayer = localStorage.getItem('selectedPlayer');
+        if (selectedPlayer) this.selectedPlayer = selectedPlayer;
+      });
     }
   }
 
