@@ -124,19 +124,9 @@ export class UserComponent {
   }
 
   saveUserData(): void {
-    console.log('saveUserData');
-    console.log(this.selectedPlayer);
-    console.log('points');
-
-    console.log("Result");
-    console.log(this.result);
-
     let points = this.result.find((x: { playername: string}) => x.playername === this.selectedPlayer).points;
     //categoryName = metricsWithCategories.find((x: { externalId: string}) => x.externalId === this.selectedMetrics[metric]).categoryName;
     let level = this.result.find((x: { playername: string}) => x.playername === this.selectedPlayer).level;
-    console.log(points);
-    console.log('level');
-    console.log(level);
     localStorage.setItem('selectedPlayer', this.selectedPlayer);
 
     localStorage.setItem('username', this.result.find((x: { playername: string}) => x.playername === this.selectedPlayer).learningdashboardUsername);
@@ -146,34 +136,16 @@ export class UserComponent {
     localStorage.setItem('teamPlayername', this.result.find((x: { playername: string}) => x.playername === this.selectedPlayer).teamPlayername);
     localStorage.setItem('individualPlayername', this.result.find((x: { playername: string}) => x.playername === this.selectedPlayer).playername);
 
-
-    console.log('SelectedPlayer');
-
     let individualPlayername: any;
 
     individualPlayername = localStorage.getItem('individualPlayername');
-
-    console.log(localStorage.getItem('selectedPlayer'));
-    console.log(localStorage.getItem('githubUsername'));
-    console.log(localStorage.getItem('taigaUsername'));
-    console.log(localStorage.getItem('project'));
-    console.log(localStorage.getItem('teamPlayername'));
-    console.log(localStorage.getItem('individualPlayername'));
 
     this.service.getPlayerGamification(individualPlayername).subscribe((res) => {
       this.gamification = res;
       //this.metrics = this.result.map((item: any) => item.value);
       //this.dates = this.result.map((item: any) => item.date);
-      console.log("Gamification");
-      console.log(this.gamification);
-
       localStorage.setItem('teamLeaderboardId', this.gamification.teamLeaderboardId);
       localStorage.setItem('individualLeaderboardId', this.gamification.individualLeaderboardId);
-
-      console.log(localStorage.getItem('teamLeaderboardId'));
-      console.log(localStorage.getItem('individualLeaderboardId'));
-      //console.log(this.metrics);
-      //console.log(this.dates);
 
     });
 
@@ -190,24 +162,16 @@ export class UserComponent {
         //this.metrics = this.result.map((item: any) => item.value);
         //this.dates = this.result.map((item: any) => item.date);
 
-        console.log(this.result);
-        //console.log(this.metrics);
-        //console.log(this.dates);
-
         return forkJoin({
           players: forkJoin(this.result.map((player:any) => this.service.getIndividualPlayer(player.playername))),
           teams: forkJoin(this.result.map((player:any) => this.service.getTeamPlayer(player.teamPlayername)))
         });
 
       })).subscribe(({players, teams}) => {
-        console.log("PLAYERS");
-        console.log(players);
         this.players = players;
         for (let player in this.players){
           this.players[player].avatar = this.sanitizer.bypassSecurityTrustResourceUrl('data:image/jpg;base64,' + this.players[player].avatar);
         }
-        console.log("TEAMS");
-        console.log(teams);
         this.teams = teams;
         for (let team in this.teams){
           this.teams[team].logo = this.sanitizer.bypassSecurityTrustResourceUrl('data:image/jpg;base64,' + this.teams[team].logo);
