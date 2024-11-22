@@ -1,6 +1,6 @@
 import {Component, ElementRef, inject} from '@angular/core';
 
-import { ReactiveFormsModule, FormBuilder, Validators } from '@angular/forms';
+import {ReactiveFormsModule, FormBuilder, Validators, FormsModule} from '@angular/forms';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { MatSelectModule } from '@angular/material/select';
@@ -22,7 +22,8 @@ import {LearningdashboardService} from "../services/learningdashboard.service";
     MatSelectModule,
     MatRadioModule,
     MatCardModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    FormsModule
   ]
 })
 export class UserComponent {
@@ -114,8 +115,6 @@ export class UserComponent {
 
   onSubmit(): void {
     this.saveUserData();
-    alert('Thanks!');
-
   }
 
   saveUserData(): void {
@@ -181,6 +180,8 @@ export class UserComponent {
     if (idToken) {
       this.service.getStudentPlayers(idToken).subscribe((res) => {
         this.result = res;
+        let selectedPlayer = localStorage.getItem('selectedPlayer');
+        if (selectedPlayer) this.selectedPlayer = selectedPlayer;
         //this.metrics = this.result.map((item: any) => item.value);
         //this.dates = this.result.map((item: any) => item.date);
 
