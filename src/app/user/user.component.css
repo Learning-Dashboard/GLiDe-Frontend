@@ -67,3 +67,10 @@
 .role, .level, .points, .team-level, .team-points {
   color: #757575;
 }
+
+.button-div {
+  margin-top: 20px;
+  margin-right: 10px;
+  display: flex;
+  justify-content: right;
+}

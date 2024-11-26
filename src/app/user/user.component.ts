@@ -10,6 +10,8 @@ import {LearningdashboardService} from "../services/learningdashboard.service";
 import {forkJoin, switchMap} from "rxjs";
 import {DomSanitizer} from "@angular/platform-browser";
 import {NgForOf, NgIf} from "@angular/common";
+import {Router} from "@angular/router";
+import {ToastrService} from "ngx-toastr";
 
 
 
@@ -151,7 +153,13 @@ export class UserComponent {
 
   }
 
-  constructor(private service: LearningdashboardService, private sanitizer: DomSanitizer) {}
+  logOut() {
+    localStorage.clear();
+    this.router.navigate(['/login']);
+    this.toastr.success('Successfully logged out','Logged out');
+  }
+
+  constructor(private service: LearningdashboardService, private sanitizer: DomSanitizer, public router: Router, private toastr: ToastrService) {}
 
   ngOnInit(): void {
     let idToken = localStorage.getItem('idToken');
