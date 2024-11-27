@@ -23,7 +23,7 @@
         <mat-card class="card">
           <mat-card-header style="justify-content: center; height: 40px;">
             <mat-card-title [ngStyle]="{'font-size': (15 - 0.5*selectedMetrics.length) + 'px'}">
-              {{metricNameDictionary[row]}}
+              {{metricIds[metricNames.indexOf(row)]}}
             </mat-card-title>
           </mat-card-header>
           <mat-card-content class="dashboard-card-content" [style.overflow]="'auto'" >
@@ -44,7 +44,7 @@
         </mat-card-header>
         <mat-card-content class="dashboard-card-content" [style.overflow]="'auto'" >
           @for (row of selectedHistoryMetrics; track row) {
-            {{metricNameDictionary[row]}}
+            {{metricIds[metricNames.indexOf(row)]}}
             <div style="height: 180px; margin-bottom: 20px" ><canvas id="historyChart_{{row}}"></canvas></div>
           }
         </mat-card-content>
