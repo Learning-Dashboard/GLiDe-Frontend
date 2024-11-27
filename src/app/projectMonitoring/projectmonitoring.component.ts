@@ -26,6 +26,7 @@ export interface DialogData {
   metrics: string[];
   historyMetrics: string[];
   barMetrics: string[];
+  availableMetrics: string[];
 }
 
 @Component({
@@ -102,18 +103,8 @@ export class ProjectmonitoringComponent {
   private allCategories: any = [];
   protected progressBarInformation : any = [];
 
-  protected metricNameDictionary: any = {
-    acceptance_criteria_check: "Acceptance Criteria Application",
-    closed_tasks_with_AE: "Closed Tasks with Actual Effort Information",
-    commits_anonymous: "'Anonymous' commits",
-    commits_sd: "Commits Standard Deviaton",
-    commits_taskreference: "Commits Tasks Relation",
-    deviation_effort_estimation_simple: "Deviation in Estimation of Task Effort",
-    pattern_check: "Use of User Story Pattern",
-    tasks_sd: "Tasks Standard Deviation",
-    tasks_with_EE: "Tasks with Estimated Effort Information",
-    unassignedtasks: "Unassigned tasks"
-  };
+  protected metricIds: any = [];
+  protected metricNames: any = [];
 
   constructor(private service: LearningdashboardService) {}
 
@@ -127,6 +118,18 @@ export class ProjectmonitoringComponent {
         this.gaugeChartTasks[gauge].resize();
       }
     });
+
+    this.service.getEvaluableActions().subscribe((result: any) => {
+      result.sort((a: any,b: any) => a.name.localeCompare(b.name));
+      for (let evaluableAction of result) {
+        if (evaluableAction.id.slice(0,4) === 'LDTM') {
+          let evaluableActionId = evaluableAction.id.slice(5).replaceAll('_',' ');
+          this.metricIds.push(evaluableActionId);
+          this.metricNames.push(evaluableAction.name);
+        }
+      }
+    })
+
     this.service.getSelectedMetrics(this.player_name).pipe(switchMap(result => {
       this.getSelectedMetricsSubscriber(result);
       this.setDates();
@@ -143,17 +146,19 @@ export class ProjectmonitoringComponent {
   private convertMetricIdToName(metrics:string[]): string[]{
     let metricNames = [];
     for (let metric in metrics){
-      metricNames.push(this.metricNameDictionary[metrics[metric]]);
+      let index = this.metricIds.indexOf(metrics[metric]);
+      metricNames.push(this.metricNames[index]);
     }
     return metricNames;
   }
 
   private convertMetricNameToId(metrics:string[]): string[]{
-    let metricNames = [];
+    let metricIds = [];
     for (let metric in metrics) {
-      metricNames.push(<string>Object.keys(this.metricNameDictionary).find(key => this.metricNameDictionary[key] === metrics[metric]));
+      let index = this.metricNames.indexOf(metrics[metric]);
+      metricIds.push(this.metricIds[index]);
     }
-    return metricNames;
+    return metricIds;
   }
 
   private getSelectedMetricsSubscriber(result:any){
@@ -445,14 +450,19 @@ export class ProjectmonitoringComponent {
 
   openDialog(): void {
     const dialogRef = this.dialog.open(DialogOverviewExampleDialog, {
-      data: {metrics: this.convertMetricIdToName(this.selectedMetrics), historyMetrics: this.convertMetricIdToName(this.selectedHistoryMetrics), barMetrics: this.convertMetricIdToName(this.selectedBarMetrics)},
+      data: {
+        metrics: this.convertMetricNameToId(this.selectedMetrics),
+        historyMetrics: this.convertMetricNameToId(this.selectedHistoryMetrics),
+        barMetrics: this.convertMetricNameToId(this.selectedBarMetrics),
+        availableMetrics: this.metricIds
+      },
     });
 
     dialogRef.afterClosed().subscribe(result => {
       if (result !== undefined) {
-        this.selectedMetrics = this.convertMetricNameToId(result.metrics);
-        this.selectedHistoryMetrics = this.convertMetricNameToId(result.historyMetrics);
-        this.selectedBarMetrics = this.convertMetricNameToId(result.barMetrics);
+        this.selectedMetrics = this.convertMetricIdToName(result.metrics);
+        this.selectedHistoryMetrics = this.convertMetricIdToName(result.historyMetrics);
+        this.selectedBarMetrics = this.convertMetricIdToName(result.barMetrics);
         this.updateSelectedMetrics(this.selectedMetrics, this.selectedHistoryMetrics, this.selectedBarMetrics).subscribe((result) => {});
         this.getCategories().subscribe((result) => { this.getProjectCategoriesSubscriber(result); });
         this.service.getProjectMetricsHistory(this.project_name, this.startDate, this.endDate).subscribe((result) => { this.getProjectMetricsHistorySubscriber(result); });
@@ -489,7 +499,7 @@ export class DialogOverviewExampleDialog {
   readonly dialogRef = inject(MatDialogRef<DialogOverviewExampleDialog>);
   readonly data = inject<DialogData>(MAT_DIALOG_DATA);
   readonly selectedMetrics = this.data.metrics;
-  readonly metrics: string[] = ["Acceptance Criteria Application", "Closed Tasks with Actual Effort Information", "'Anonymous' commits", "Commits Standard Deviaton", "Commits Tasks Relation", "Deviation in Estimation of Task Effort", "Use of User Story Pattern", "Tasks Standard Deviation", "Tasks with Estimated Effort Information", "Unassigned tasks"];
+  readonly metrics: string[] = this.data.availableMetrics;
 
   onNoClick(): void {
     this.dialogRef.close();

@@ -109,4 +109,8 @@ export class LearningdashboardService {
       .set('Authorization',idToken);
     return this.http.get(this.backUrl + '/students/players', {headers: headers});
   }
+
+  getEvaluableActions(){
+    return this.http.get(this.backUrl + '/gamification/evaluableActions');
+  }
 }
