@@ -143,7 +143,7 @@ export class ProjectmonitoringComponent {
     });
   }
 
-  private convertMetricIdToName(metrics:string[]): string[]{    //de clau a valor
+  private convertMetricIdToName(metrics:string[]): string[]{
     let metricNames = [];
     for (let metric in metrics){
       let index = this.metricIds.indexOf(metrics[metric]);
@@ -499,7 +499,7 @@ export class DialogOverviewExampleDialog {
   readonly dialogRef = inject(MatDialogRef<DialogOverviewExampleDialog>);
   readonly data = inject<DialogData>(MAT_DIALOG_DATA);
   readonly selectedMetrics = this.data.metrics;
-  readonly metrics: string[] = this.data.availableMetrics;//["Acceptance Criteria Application", "Closed Tasks with Actual Effort Information", "'Anonymous' commits", "Commits Standard Deviaton", "Commits Tasks Relation", "Deviation in Estimation of Task Effort", "Use of User Story Pattern", "Tasks Standard Deviation", "Tasks with Estimated Effort Information", "Unassigned tasks"];
+  readonly metrics: string[] = this.data.availableMetrics;
 
   onNoClick(): void {
     this.dialogRef.close();
