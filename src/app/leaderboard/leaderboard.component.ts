@@ -24,7 +24,7 @@ export class LeaderboardComponent {
 
   constructor(private service: LearningdashboardService){}
 
-  ngOnInit(){
+  ngOnChanges(){
 
     const leaderboardId = this.item.id;
 

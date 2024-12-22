@@ -14,7 +14,7 @@ import {MatProgressBar} from "@angular/material/progress-bar";
   imports: [MatTableModule, MatPaginatorModule, MatSortModule, MatProgressBar]
 })
 
-export class RankingComponent implements AfterViewInit {
+export class RankingComponent {
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
   @ViewChild(MatTable) table!: MatTable<TableItem>;
@@ -34,6 +34,7 @@ export class RankingComponent implements AfterViewInit {
   /** Columns displayed in the table. Columns IDs can be added, removed, or reordered. */
   displayedColumns = ['position', 'name', 'points'];
 
+  /*
   ngOnInit() {
 
     let leaderboardId = this.item.id;
@@ -67,10 +68,50 @@ export class RankingComponent implements AfterViewInit {
     })
   }
 
+   */
+
+  ngOnChanges(){
+    this.dataSource = [];
+    this.data = [];
+    this.list = [];
+
+    let leaderboardId = this.item.id;
+    let anonymization = this.item.anonymization;
+
+    this.service.getLeaderboardResults(leaderboardId).subscribe((res) => {
+      this.data = res;
+      this.position = 0
+      this.data = this.data[0].leaderboardResults;
+
+      this.individualPlayerName = localStorage.getItem("individualPlayer");
+      this.teamPlayerName = localStorage.getItem("teamPlayer");
+
+      for (let a in this.data) {
+        this.position = this.position + 1;
+        if (this.position == 1) this.maxPoints = this.data[a].points;
+        let percent = (this.data[a].points / this.maxPoints) * 100;
+        let name: any;
+        if ((this.data[a].name == this.teamPlayerName || this.data[a].name == this.individualPlayerName) || anonymization == "None") name = this.data[a].playername;
+        else if (anonymization == "Partial" && this.position < 4) name = this.data[a].playername;
+        else name = "-";
+        this.list.push({name: name, points: this.data[a].achievementunits, position: this.position, percent: percent});
+      }
+
+      this.data = this.list;
+
+      this.dataSource = new RankingDatasource(this.data);
+      this.dataSource.sort = this.sort;
+      this.dataSource.paginator = this.paginator;
+      this.table.dataSource = this.dataSource;
+    })
+  }
+/*
   ngAfterViewInit(): void {
     this.dataSource = new RankingDatasource(this.data);
     this.dataSource.sort = this.sort;
     this.dataSource.paginator = this.paginator;
     this.table.dataSource = this.dataSource;
   }
+
+ */
 }

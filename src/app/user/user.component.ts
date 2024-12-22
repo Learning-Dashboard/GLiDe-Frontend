@@ -144,11 +144,9 @@ export class UserComponent {
 
     this.service.getPlayerGamification(individualPlayername).subscribe((res) => {
       this.gamification = res;
-      //this.metrics = this.result.map((item: any) => item.value);
-      //this.dates = this.result.map((item: any) => item.date);
-      localStorage.setItem('teamLeaderboardId', this.gamification.teamLeaderboardId);
-      localStorage.setItem('individualLeaderboardId', this.gamification.individualLeaderboardId);
-
+      localStorage.setItem('gameSubjectAcronym', this.gamification.gameSubjectAcronym);
+      localStorage.setItem('gameCourse', this.gamification.gameCourse);
+      localStorage.setItem('gamePeriod', this.gamification.gamePeriod);
     });
 
   }

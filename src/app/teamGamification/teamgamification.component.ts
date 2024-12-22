@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import {AsyncPipe, NgIf} from '@angular/common';
+import {AsyncPipe, NgForOf, NgIf} from '@angular/common';
 import { MatGridListModule } from '@angular/material/grid-list';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatIconModule } from '@angular/material/icon';
@@ -16,6 +16,10 @@ import {MatTooltip} from "@angular/material/tooltip";
 import {ListComponent} from "../list/list.component";
 import {LeaderboardComponent} from "../leaderboard/leaderboard.component";
 import {RankingComponent} from "../ranking/ranking.component";
+import {MatFormField, MatLabel} from "@angular/material/form-field";
+import {MatOption} from "@angular/material/autocomplete";
+import {MatSelect} from "@angular/material/select";
+import {FormsModule} from "@angular/forms";
 
 class Badge {
   name: string | undefined;
@@ -48,7 +52,13 @@ let globalNotAttainedBadges: Badge[] = [];
     MatTooltip,
     LeaderboardComponent,
     RankingComponent,
-    NgIf
+    NgIf,
+    MatFormField,
+    MatLabel,
+    MatOption,
+    MatSelect,
+    NgForOf,
+    FormsModule
   ]
 })
 
@@ -64,8 +74,11 @@ export class TeamgamificationComponent {
   protected individualPlayer: any;
   private teamPlayerName: any;
   private individualPlayerName: any;
-  private teamLeaderboardId: any;
   protected leaderboard: any;
+  protected leaderboards: any;
+  private gameSubjectAcronym: any;
+  private gameCourse: any;
+  private gamePeriod: any;
 
   constructor(private service: LearningdashboardService, private sanitizer: DomSanitizer, public dialog: MatDialog) {}
 
@@ -73,13 +86,21 @@ export class TeamgamificationComponent {
 
     this.individualPlayerName = localStorage.getItem("individualPlayername");
     this.teamPlayerName = localStorage.getItem("teamPlayername");
-    this.teamLeaderboardId = localStorage.getItem("teamLeaderboardId");
+    this.gameSubjectAcronym = localStorage.getItem('gameSubjectAcronym');
+    this.gameCourse = localStorage.getItem('gameCourse');
+    this.gamePeriod = localStorage.getItem('gamePeriod');
 
     if (this.individualPlayerName != null && this.teamPlayerName != null) {
 
       //Leaderboard
-      this.service.getLeaderboard(this.teamLeaderboardId).subscribe((res) => {
-        this.leaderboard = res;
+      this.service.getLeaderboards(this.gameSubjectAcronym, this.gameCourse, this.gamePeriod).subscribe((res: any) => {
+        let leaderboards = res;
+        this.leaderboards = [];
+        for (let leaderboard of leaderboards) {
+          if (leaderboard.assessmentLevel === 'Team' && leaderboard.studentVisible)
+            this.leaderboards.push(leaderboard);
+        }
+        this.leaderboard = this.leaderboards[0];
       })
 
       //Individual player information
