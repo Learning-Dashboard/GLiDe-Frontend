@@ -14,6 +14,10 @@ export class LearningdashboardService {
     return this.http.get(this.backUrl + '/leaderboards/' + id);
   }
 
+  getLeaderboards(gameSubjectAcronym: string, gameCourse: number, gamePeriod: string){
+    return this.http.get(this.backUrl + '/leaderboards?gameSubjectAcronym=' + gameSubjectAcronym + '&gameCourse=' + gameCourse + '&gamePeriod=' + gamePeriod);
+  }
+
   getLeaderboardResults(id: number){
     return this.http.get(this.backUrl + '/leaderboards/' + id + '/results');
   }

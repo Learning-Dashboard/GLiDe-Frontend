@@ -57,6 +57,14 @@
       </mat-card-content>
     </mat-card>
   </div>
+  <mat-form-field class="selector">
+    <mat-label>Leaderboard</mat-label>
+    <mat-select [(ngModel)]="leaderboard">
+      <mat-option *ngFor="let leaderboardOption of leaderboards" [value]="leaderboardOption">
+        {{leaderboardOption.name}}
+      </mat-option>
+    </mat-select>
+  </mat-form-field>
   <mat-card *ngIf="leaderboard" class="leaderboard-card">
     <mat-card-header>
       <mat-card-title>

@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import {AsyncPipe, NgIf} from '@angular/common';
+import {NgForOf, NgIf} from '@angular/common';
 import { MatGridListModule } from '@angular/material/grid-list';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatIconModule } from '@angular/material/icon';
@@ -8,14 +8,15 @@ import { MatCardModule } from '@angular/material/card';
 import {MatTableModule} from '@angular/material/table';
 import {LearningdashboardService} from "../services/learningdashboard.service";
 import { DomSanitizer } from '@angular/platform-browser';
-import {MatExpansionPanel, MatExpansionPanelDescription, MatExpansionPanelTitle} from "@angular/material/expansion";
+import {MatExpansionPanel, MatExpansionPanelTitle} from "@angular/material/expansion";
 import {MatExpansionModule} from '@angular/material/expansion';
-import {MatDivider} from "@angular/material/divider";
 import {MatDialog, MatDialogModule} from '@angular/material/dialog';
 import {MatTooltip} from "@angular/material/tooltip";
 import {ListComponent} from "../list/list.component";
 import {LeaderboardComponent} from "../leaderboard/leaderboard.component";
 import {RankingComponent} from "../ranking/ranking.component";
+import {MatFormField, MatLabel, MatOption, MatSelect} from "@angular/material/select";
+import {FormsModule} from "@angular/forms";
 
 class Badge {
   name: string | undefined;
@@ -33,7 +34,6 @@ let globalNotAttainedBadges: Badge[] = [];
   styleUrl: './individualgamification.component.css',
   standalone: true,
   imports: [
-    AsyncPipe,
     MatGridListModule,
     MatMenuModule,
     MatIconModule,
@@ -42,13 +42,17 @@ let globalNotAttainedBadges: Badge[] = [];
     MatTableModule,
     MatExpansionPanel,
     MatExpansionPanelTitle,
-    MatExpansionPanelDescription,
     MatExpansionModule,
-    MatDivider,
     MatTooltip,
     LeaderboardComponent,
     RankingComponent,
-    NgIf
+    NgIf,
+    MatSelect,
+    MatLabel,
+    MatOption,
+    NgForOf,
+    FormsModule,
+    MatFormField
   ]
 })
 
@@ -64,8 +68,11 @@ export class IndividualgamificationComponent {
   protected individualPlayer: any;
   private teamPlayerName: any;
   private individualPlayerName: any;
-  private individualLeaderboardId: any;
   protected leaderboard: any;
+  protected leaderboards: any;
+  private gameSubjectAcronym: any;
+  private gameCourse: any;
+  private gamePeriod: any;
 
   constructor(private service: LearningdashboardService, private sanitizer: DomSanitizer, public dialog: MatDialog) {}
 
@@ -73,13 +80,21 @@ export class IndividualgamificationComponent {
 
     this.individualPlayerName = localStorage.getItem("individualPlayername");
     this.teamPlayerName = localStorage.getItem("teamPlayername");
-    this.individualLeaderboardId = localStorage.getItem("individualLeaderboardId");
+    this.gameSubjectAcronym = localStorage.getItem('gameSubjectAcronym');
+    this.gameCourse = localStorage.getItem('gameCourse');
+    this.gamePeriod = localStorage.getItem('gamePeriod');
 
     if (this.individualPlayerName != null && this.teamPlayerName != null) {
 
       //Leaderboard
-      this.service.getLeaderboard(this.individualLeaderboardId).subscribe((res) => {
-        this.leaderboard = res;
+      this.service.getLeaderboards(this.gameSubjectAcronym, this.gameCourse, this.gamePeriod).subscribe((res: any) => {
+        let leaderboards = res;
+        this.leaderboards = [];
+        for (let leaderboard of leaderboards) {
+          if (leaderboard.assessmentLevel === 'Individual' && leaderboard.studentVisible)
+            this.leaderboards.push(leaderboard);
+        }
+        this.leaderboard = this.leaderboards[0];
       })
 
       //Individual player information
