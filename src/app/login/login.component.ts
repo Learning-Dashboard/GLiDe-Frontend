@@ -2,6 +2,7 @@ import {Component, Injector, NgZone, OnInit} from '@angular/core';
 import {Router} from "@angular/router";
 import {LearningdashboardService} from "../services/learningdashboard.service";
 import {ToastrService} from "ngx-toastr";
+import {environment} from "../../environments/environment";
 
 @Component({
   selector: 'app-login',
@@ -16,6 +17,7 @@ export class LoginComponent {
   constructor(private injector: Injector, private service: LearningdashboardService, private toastr: ToastrService) { }
 
   ngOnInit(): void {
+    document.getElementById('g_id_onload')?.setAttribute('data-client_id', environment.googleClient);
     (window as any).handleOauthResponse = this.handleOauthResponse.bind(this);
     this.loadGoogleScript()
       .then(() => {
