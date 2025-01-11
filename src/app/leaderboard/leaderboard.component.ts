@@ -64,6 +64,12 @@ export class LeaderboardComponent {
           name[0] = position2[0].playername;
           name[2] = position3[0].playername;
         }
+        else {
+          let individualPlayername = localStorage.getItem("individualPlayername");
+          if (position1[0].playername === individualPlayername) name[1] = position1[0].playername;
+          if (position2[0].playername === individualPlayername) name[0] = position2[0].playername;
+          if (position3[0].playername === individualPlayername) name[2] = position3[0].playername;
+        }
 
         achievementUnit[1] = position1[0].achievementunits;
         avatar[1] = position1[0].playerimage;
