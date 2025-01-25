@@ -16,17 +16,34 @@ export class LeaderboardComponent {
 
   @Input() item: any;
 
-  protected chart: any = [];
+  protected chart: any;
 
   private leaderboardResultsData: any = [];
   private leaderboardResults: any = [];
   protected validLeaderboard = false;
+  private initialized = false;
 
   constructor(private service: LearningdashboardService){}
 
+  ngAfterViewInit(){
+    this.validLeaderboard = true;
+    this.drawLeaderboard();
+    this.initialized = true;
+  }
+
   ngOnChanges(){
+    if(this.initialized){
+      this.validLeaderboard = true;
+      this.drawLeaderboard();
+    }
+  }
+
+  drawLeaderboard(){
 
     const leaderboardId = this.item.id;
+    let anonymization = this.item.anonymization;
+
+    if (this.chart) this.chart.destroy();
 
     this.service.getLeaderboardResults(leaderboardId).subscribe((res) => {
       this.leaderboardResultsData = res;
@@ -40,17 +57,26 @@ export class LeaderboardComponent {
       const position2 = this.leaderboardResults.filter((x: { position: number}) => x.position === 2);
       const position3 = this.leaderboardResults.filter((x: { position: number}) => x.position === 3);
 
-      if (position1.length === 1 && position2.length === 1 && position3.length === 3) this.validLeaderboard = true;
+      this.validLeaderboard = position1.length === 1 && position2.length === 1 && position3.length === 1;
       if (this.validLeaderboard) {
-        name[1] = position1[0].playername;
+        if (anonymization !== 'Full'){
+          name[1] = position1[0].playername;
+          name[0] = position2[0].playername;
+          name[2] = position3[0].playername;
+        }
+        else {
+          let individualPlayername = localStorage.getItem("individualPlayername");
+          if (position1[0].playername === individualPlayername) name[1] = position1[0].playername;
+          if (position2[0].playername === individualPlayername) name[0] = position2[0].playername;
+          if (position3[0].playername === individualPlayername) name[2] = position3[0].playername;
+        }
+
         achievementUnit[1] = position1[0].achievementunits;
         avatar[1] = position1[0].playerimage;
 
-        name[0] = position2[0].playername;
         achievementUnit[0] = position2[0].achievementunits;
         avatar[0] = position2[0].playerimage;
 
-        name[2] = position3[0].playername;
         achievementUnit[2] = position3[0].achievementunits;
         avatar[2] = position3[0].playerimage;
 

@@ -1,4 +1,4 @@
-import {AfterViewInit, Component, Input, ViewChild} from '@angular/core';
+import {Component, Input, ViewChild} from '@angular/core';
 import {MatTableModule, MatTable} from '@angular/material/table';
 import { MatPaginatorModule, MatPaginator } from '@angular/material/paginator';
 import { MatSortModule, MatSort } from '@angular/material/sort';
@@ -34,42 +34,6 @@ export class RankingComponent {
   /** Columns displayed in the table. Columns IDs can be added, removed, or reordered. */
   displayedColumns = ['position', 'name', 'points'];
 
-  /*
-  ngOnInit() {
-
-    let leaderboardId = this.item.id;
-    let anonymization = this.item.anonymization;
-
-    this.service.getLeaderboardResults(leaderboardId).subscribe((res) => {
-      this.data = res;
-      this.position = 0
-      this.data = this.data[0].leaderboardResults;
-
-      this.individualPlayerName = localStorage.getItem("individualPlayer");
-      this.teamPlayerName = localStorage.getItem("teamPlayer");
-
-      for (let a in this.data) {
-        this.position = this.position + 1;
-        if (this.position == 1) this.maxPoints = this.data[a].points;
-        let percent = (this.data[a].points / this.maxPoints) * 100;
-        let name: any;
-        if ((this.data[a].name == this.teamPlayerName || this.data[a].name == this.individualPlayerName) || anonymization == "None") name = this.data[a].playername;
-        else if (anonymization == "Partial" && this.position < 4) name = this.data[a].playername;
-        else name = "-";
-        this.list.push({name: name, points: this.data[a].achievementunits, position: this.position, percent: percent});
-      }
-
-      this.data = this.list;
-
-      this.dataSource = new RankingDatasource(this.data);
-      this.dataSource.sort = this.sort;
-      this.dataSource.paginator = this.paginator;
-      this.table.dataSource = this.dataSource;
-    })
-  }
-
-   */
-
   ngOnChanges(){
     this.dataSource = [];
     this.data = [];
@@ -83,15 +47,15 @@ export class RankingComponent {
       this.position = 0
       this.data = this.data[0].leaderboardResults;
 
-      this.individualPlayerName = localStorage.getItem("individualPlayer");
-      this.teamPlayerName = localStorage.getItem("teamPlayer");
+      this.individualPlayerName = localStorage.getItem("individualPlayername");
+      this.teamPlayerName = localStorage.getItem("teamPlayername");
 
       for (let a in this.data) {
         this.position = this.position + 1;
         if (this.position == 1) this.maxPoints = this.data[a].points;
         let percent = (this.data[a].points / this.maxPoints) * 100;
         let name: any;
-        if ((this.data[a].name == this.teamPlayerName || this.data[a].name == this.individualPlayerName) || anonymization == "None") name = this.data[a].playername;
+        if ((this.data[a].playername == this.teamPlayerName || this.data[a].playername == this.individualPlayerName) || anonymization == "None") name = this.data[a].playername;
         else if (anonymization == "Partial" && this.position < 4) name = this.data[a].playername;
         else name = "-";
         this.list.push({name: name, points: this.data[a].achievementunits, position: this.position, percent: percent});
@@ -105,13 +69,4 @@ export class RankingComponent {
       this.table.dataSource = this.dataSource;
     })
   }
-/*
-  ngAfterViewInit(): void {
-    this.dataSource = new RankingDatasource(this.data);
-    this.dataSource.sort = this.sort;
-    this.dataSource.paginator = this.paginator;
-    this.table.dataSource = this.dataSource;
-  }
-
- */
 }
