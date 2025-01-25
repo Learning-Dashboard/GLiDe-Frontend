@@ -14,7 +14,7 @@ import {environment} from "../../environments/environment";
 export class LoginComponent {
   private scriptLoaded = false;
 
-  constructor(private injector: Injector, private service: LearningdashboardService, private toastr: ToastrService) { }
+  constructor(private injector: Injector, private service: LearningdashboardService, private toastr: ToastrService, private zone: NgZone) { }
 
   ngOnInit(): void {
     document.getElementById('g_id_onload')?.setAttribute('data-client_id', environment.googleClient);
@@ -34,18 +34,19 @@ export class LoginComponent {
 
   handleOauthResponse(response: any): void {
     const responsePayload = this.decodeJWTToken(response.credential);
-    this.service.postLogin(response.credential).subscribe((result) => {
-      if (result.status === 200){
+    this.service.postLogin(response.credential).subscribe({
+      next: (result) => {
         localStorage.setItem('loggedUser', JSON.stringify(responsePayload));
         localStorage.setItem('idToken', response.credential);
         const routerService = this.injector.get(Router);
         const ngZone = this.injector.get(NgZone);
-        ngZone.run(() =>{
+        ngZone.run(() => {
           routerService.navigate(['/profile']);
         });
+      },
+      error: (error) => {
+        this.zone.run(() => this.toastr.error('Faild to authenticate user', 'Log in failed'));
       }
-      else if (result.status === 404) this.toastr.error('The user does not exist', 'Log in failed');
-      else if (result.status === 401) this.toastr.error('Failed to verify user', 'Log in failed');
     })
   }
 
